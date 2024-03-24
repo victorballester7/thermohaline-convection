@@ -1,0 +1,21 @@
+#Tex files:
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.synctex(busy)
+*.nav
+*.snm
+*.toc
+*.xml
+*.script
+*.table
+
+**/.vscode/**
+**/__pycache__/**
+output/results/*
