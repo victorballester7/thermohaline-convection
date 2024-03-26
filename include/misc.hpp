@@ -13,7 +13,11 @@
 #define Vstar(i, j) vstar[(i) * prm.NY + (j)]
 #define P(i, j) p[(i) * prm.NY + (j)]
 #define T(i, j) T[(i) * prm.NY + (j)]
+#define T_eq(i, j) T_eq[(i) * prm.NY + (j)]
+#define Delta_T(i, j) Delta_T[(i) * prm.NY + (j)]
 #define S(i, j) S[(i) * prm.NY + (j)]
+#define S_eq(i, j) S_eq[(i) * prm.NY + (j)]
+#define Delta_S(i, j) Delta_S[(i) * prm.NY + (j)]
 #define DIV(i, j) div((i) * prm.ny + (j))
 #define x(i) (-0.5 * prm.dx + (i) * prm.dx)
 #define y(j) (-0.5 * prm.dy + (j) * prm.dy)

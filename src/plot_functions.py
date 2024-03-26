@@ -11,6 +11,17 @@ def get_color():
     return cm['RdBu_r']
 
 
+def get_title(plot_var):
+    if plot_var == 'u':
+        return 'Velocity magnitude'
+    elif plot_var == 'T':
+        return 'Temperature'
+    elif plot_var == 'S':
+        return 'Salinity'
+    elif plot_var == 'p':
+        return 'Pressure'
+
+
 def set_nx_ny(data_blocks):
     nx = data_blocks.shape[2]
     ny = data_blocks.shape[1]
@@ -42,6 +53,10 @@ def get_plot_args(dx, LX, LY, Z_MIN, Z_MAX, color):
 def set_datablocks(plot_var, data_blocks_u, data_blocks_v,
                    data_blocks_T, data_blocks_S, data_blocks_p):
     if plot_var == 'u':
+        data_blocks = data_blocks_u
+    if plot_var == 'v':
+        data_blocks = data_blocks_v
+    if plot_var == 'uv':
         data_blocks = np.sqrt(data_blocks_u**2 + data_blocks_v**2)
     elif plot_var == 'T':
         data_blocks = data_blocks_T

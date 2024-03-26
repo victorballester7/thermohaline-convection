@@ -31,15 +31,15 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "${GREEN}Running done!${RESET}"
 
-# echo -e "${YELLOW}Animating...${RESET}"
-# # use python3 if you have it installed, otherwise use python
-# if [ -x "$(command -v python3)" ]; then
-#   python3 src/animation.py
-# else
-#   python src/animation.py
-# fi
-# if [ $? -ne 0 ]; then
-#   echo -e "${RED}Animating failed!${RESET}"
-#   exit 1
-# fi
-# echo -e "${GREEN}Animating done!${RESET}"
+echo -e "${YELLOW}Animating...${RESET}"
+# use python3 if you have it installed, otherwise use python
+if [ -x "$(command -v python3)" ]; then
+  python3 src/animation.py
+else
+  python src/animation.py
+fi
+if [ $? -ne 0 ]; then
+  echo -e "${RED}Animating failed!${RESET}"
+  exit 1
+fi
+echo -e "${GREEN}Animating done!${RESET}"

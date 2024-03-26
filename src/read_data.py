@@ -144,14 +144,6 @@ def set_data(folder_path):
     data_blocks_S = np.array(data_blocks_S)
     data_blocks_p = np.array(data_blocks_p)
 
-    print("hola")
-    print(times)
-    print(data_blocks_u.shape)
-    print(data_blocks_v)
-    print(data_blocks_T)
-    print(data_blocks_S)
-    print(data_blocks_p)
-
     arrays_to_process = [
         data_blocks_u,
         data_blocks_v,
@@ -161,12 +153,12 @@ def set_data(folder_path):
 
     # Iterate over each array and remove columns
     for i, data_array in enumerate(arrays_to_process):
-        arrays_to_process[i] = np.delete(data_array,
-                                         np.s_[:cols_removed_beginning],
-                                         axis=1)
-        arrays_to_process[i] = np.delete(arrays_to_process[i],
-                                         np.s_[-cols_removed_end:],
-                                         axis=1)
+        # arrays_to_process[i] = np.delete(data_array,
+        #                                   np.s_[:cols_removed_beginning],
+        #                                   axis=1)
+        # arrays_to_process[i] = np.delete(arrays_to_process[i],
+        #                                   np.s_[-cols_removed_end:],
+        #                                   axis=1)
 
         tmp = arrays_to_process[i].copy()
 

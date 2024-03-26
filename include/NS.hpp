@@ -63,13 +63,13 @@ void BC_salinity(double* S, Prm prm);
 // @param x x-coordinate of the point in the upper boundary
 // @param prm parameters of the simulation (dx, dy, dt, etc.)
 // @return value of the income or outflow of temperature at the upper boundary
-double flow_T(double x, Prm prm);
+double flux_T(double x, Prm prm);
 
 // @brief Returns the value of the income or outflow of salinity at the upper boundary
 // @param x x-coordinate of the point in the upper boundary
 // @param prm parameters of the simulation (dx, dy, dt, etc.)
 // @return value of the income or outflow of salinity at the upper boundary
-double flow_S(double x, Prm prm);
+double flux_S(double x, Prm prm);
 
 // @brief Build the Poisson matrix for the pressure Poisson equation poisson(p) = div(u)
 // @param coeffs vector of triplets to store the coefficients of the Possion matrix. Triplets consist of (i, j, value), where i and j are the indices of the matrix and value is the value of the coefficient

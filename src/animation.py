@@ -42,9 +42,9 @@ def animate(folder_path: str, save: bool = False):
     X, Y = set_axis(dx, dy, LX, LY, nx, ny)
 
     Z = data_blocks[0]
-    Z_MAX, Z_MIN = set_Z_max_min(data_blocks, w_on)
+    Z_MAX, Z_MIN = set_Z_max_min(data_blocks)
 
-    color = get_color(w_on)
+    color = get_color()
 
     plot_args = get_plot_args(dx, LX, LY, Z_MIN, Z_MAX, color)
 
@@ -53,9 +53,7 @@ def animate(folder_path: str, save: bool = False):
     time_text = ax.text(**text_args)
 
     # set title (omega or sqrt(u^2 + v^2)
-    ax.set_title(
-        r'$\omega$' if w_on else r'$\sqrt{u^2 + v^2}$',
-        y=y_pos_title)
+    ax.set_title(get_title(plot_var), y=y_pos_title)
 
     # Axes
     ax.set_xlabel(X_LABEL)
@@ -99,7 +97,8 @@ def animate(folder_path: str, save: bool = False):
 
     if save:
         # Save the animation
-        filename = 'data/videos/' + obstacle + '_Re=' + str(Re) + '.mp4'
+        filename = 'data/videos/' + plot_var + '_Pr=' + str(Pr) + '_Sc=' + str(Sc) + '_Le=' + str(
+            Le) + '_Ra_T=' + str(Ra_T) + '_Ra_S=' + str(Ra_S) + '_R_rho=' + str(R_rho) + '.mp4'
         ani.save(filename, writer='ffmpeg', dpi=300, fps=FPS)
     else:
         # Show the animation
@@ -114,7 +113,7 @@ folder_results = 'output/results/'
 folder_object = 'config/'
 
 # Read data
-Re, NX, NY, LX, LY, L, U, nu, dx, dy, dt, T, obstacle, w_on, animation_on = readSetupFromHDF5(
+NX, NY, LX, LY, Pr, Sc, Le, Ra_T, Ra_S, R_rho, dx, dy, dt, Tfinal, animation_on, plot_var = readSetupFromHDF5(
     folder_results + '../setup.h5')
 
 if animation_on == False:
