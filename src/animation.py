@@ -44,9 +44,10 @@ def animate(folder_path: str, save: bool = False):
     Z = data_blocks[0]
     Z_MAX, Z_MIN = set_Z_max_min(data_blocks)
 
-    color = get_color()
+    color = get_color(plot_var)
 
     plot_args = get_plot_args(dx, LX, LY, Z_MIN, Z_MAX, color)
+    plot_args_quiver = get_plot_args_quiver()
 
     text_args = {'x': 0.5, 'y': y_pos_text, 's': '', 'transform': ax.transAxes,
                  'fontsize': FONTSIZE_TIME, 'horizontalalignment': 'center'}
@@ -60,7 +61,15 @@ def animate(folder_path: str, save: bool = False):
     ax.set_ylabel(Y_LABEL)
 
     # Create plot
-    plot = [ax.imshow(Z, **plot_args)]
+    # add quiver plot with u and v with 1/numth of the points
+    num = 8
+    uu, vv, XX, YY = data_blocks_u[0, ::num, ::num], data_blocks_v[0, ::num,
+                                                                   ::num], X[::num, ::num], Y[::num, ::num]
+    # uuvv = np.sqrt(uu**2 + vv**2)
+    # uu, vv = uu/uuvv, vv/uuvv
+    YY = YY[::-1]
+    plot = [ax.imshow(Z, **plot_args),
+            ax.quiver(XX, YY, uu, vv, **plot_args_quiver)]
 
     # Add a color bar which maps values to colors.
     fig.colorbar(plot[0], **colorbar_args)
@@ -73,19 +82,23 @@ def animate(folder_path: str, save: bool = False):
         # Clear the previous frame
         # ax.clear()
         plot[0].remove()
+        plot[1].remove()
 
         real_frame = int(frame)
 
         # Update the arrays
         Z = data_blocks[real_frame]
+        uu, vv = data_blocks_u[real_frame, ::num,
+                               ::num], data_blocks_v[real_frame, ::num, ::num]
 
         # Update the time text
         time_text.set_text('t = %.3f' % times[real_frame])
 
         # Update the plot
         plot[0] = ax.imshow(Z, **plot_args)
+        plot[1] = ax.quiver(XX, YY, uu, vv, **plot_args_quiver)
 
-        return plot[0], time_text
+        return plot[0], plot[1], time_text
 
     # Create the animation
     ani = FuncAnimation(fig, update, frames=num_frames,

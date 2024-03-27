@@ -148,6 +148,12 @@ int main(void) {
       S(i, j) = (prm.H - y(j)) * prm.A_S / prm.H;
     }
   }
+  // hot spot in the middle
+  for (int i = prm.NX / 4; i < 3 * prm.NX / 4; i++) {
+    for (int j = prm.NY / 4; j < 3 * prm.NY / 4; j++) {
+      T(i, j) += prm.A_T;
+    }
+  }
 
   string filename_out = "output/prova.txt";
   ofstream file_out;
@@ -335,22 +341,22 @@ int main(void) {
 
     // diffusion term
     START_TIMER();
+
+    // crankNicholson(T, adv_u, S, adv_v, prm);
+
     for (int i = 1; i < prm.NX - 1; i++) {
       for (int j = 1; j < prm.NY - 1; j++) {
-        // lap = (T(i + 1, j) - 2 * T(i, j) + T(i - 1, j)) / (prm.dx * prm.dx) +
-        //       (T(i, j + 1) - 2 * T(i, j) + T(i, j - 1)) / (prm.dy * prm.dy);
-        lap = (Delta_T(i + 1, j) - 2 * Delta_T(i, j) + Delta_T(i - 1, j)) / (prm.dx * prm.dx) +
-              (Delta_T(i, j + 1) - 2 * Delta_T(i, j) + Delta_T(i, j - 1)) / (prm.dy * prm.dy);
+        lap = (T(i + 1, j) - 2 * T(i, j) + T(i - 1, j)) / (prm.dx * prm.dx) +
+              (T(i, j + 1) - 2 * T(i, j) + T(i, j - 1)) / (prm.dy * prm.dy);
         ADV_U(i, j) += prm.dt * lap;
-        // lap = (S(i + 1, j) - 2 * S(i, j) + S(i - 1, j)) / (prm.dx * prm.dx) +
-        //       (S(i, j + 1) - 2 * S(i, j) + S(i, j - 1)) / (prm.dy * prm.dy);
-        lap = (Delta_S(i + 1, j) - 2 * Delta_S(i, j) + Delta_S(i - 1, j)) / (prm.dx * prm.dx) +
-              (Delta_S(i, j + 1) - 2 * Delta_S(i, j) + Delta_S(i, j - 1)) / (prm.dy * prm.dy);
+        lap = (S(i + 1, j) - 2 * S(i, j) + S(i - 1, j)) / (prm.dx * prm.dx) +
+              (S(i, j + 1) - 2 * S(i, j) + S(i, j - 1)) / (prm.dy * prm.dy);
         ADV_V(i, j) += prm.dt * lap / prm.Le;
       }
     }
     memcpy(T, adv_u, prm.NXNY * sizeof(double));
     memcpy(S, adv_v, prm.NXNY * sizeof(double));
+
     END_TIMER();
     ADD_TIME_TO(total_diffusion);
 #ifdef write
@@ -379,7 +385,7 @@ int main(void) {
     // ---------- printing to file ------------
     START_TIMER();
     if (WRITE_ANIM()) {
-      saveDataToHDF5(plot_count, u, v, T, S, p, prm.NX, prm.NY, t);
+      saveDataToHDF5(plot_count, u, v, Delta_T, Delta_S, p, prm.NX, prm.NY, t);
 #ifdef write
       file_out << "final T" << endl;
       write_sol(file_out, T, t, prm, true);

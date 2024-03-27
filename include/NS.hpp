@@ -76,4 +76,5 @@ double flux_S(double x, Prm prm);
 // @param prm parameters of the simulation (dx, dy, dt, etc.)
 void buildPoissonMatrix(vector<Trip>& coeffs, Prm prm);
 
+void crankNicholson(double* T, double* adv_T, double* S, double* adv_S, Prm prm);
 #endif  // NS_HPP

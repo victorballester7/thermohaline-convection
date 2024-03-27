@@ -9,6 +9,8 @@
 #define W(i, j) w[(i) * prm.NY + (j)]
 #define ADV_U(i, j) adv_u[(i) * prm.NY + (j)]
 #define ADV_V(i, j) adv_v[(i) * prm.NY + (j)]
+#define ADV_T(i, j) adv_T[(i) * prm.NY + (j)]
+#define ADV_S(i, j) adv_S[(i) * prm.NY + (j)]
 #define Ustar(i, j) ustar[(i) * prm.NY + (j)]
 #define Vstar(i, j) vstar[(i) * prm.NY + (j)]
 #define P(i, j) p[(i) * prm.NY + (j)]
@@ -21,6 +23,8 @@
 #define DIV(i, j) div((i) * prm.ny + (j))
 #define x(i) (-0.5 * prm.dx + (i) * prm.dx)
 #define y(j) (-0.5 * prm.dy + (j) * prm.dy)
+
+#define TOL 1e-6  // tolerance for the iterative solver
 
 typedef struct prm {
   int NX;      // number of points in the x direction (including the ghost points)

@@ -7,13 +7,20 @@ from matplotlib.patches import Circle, Rectangle
 from defaults import *
 
 
-def get_color():
-    return cm['RdBu_r']
+def get_color(plot_var):
+    redblue = cm['RdBu_r']
+    only_red = ListedColormap(redblue(np.linspace(0.5, 1, 128)))
+    color = only_red if plot_var == 'uv' else redblue
+    return color
 
 
 def get_title(plot_var):
     if plot_var == 'u':
-        return 'Velocity magnitude'
+        return r'$u$'
+    elif plot_var == 'v':
+        return r'$v$'
+    elif plot_var == 'uv':
+        return r'$\sqrt{u^2 + v^2}$'
     elif plot_var == 'T':
         return 'Temperature'
     elif plot_var == 'S':
@@ -47,6 +54,14 @@ def get_plot_args(dx, LX, LY, Z_MIN, Z_MAX, color):
         'vmin': Z_MIN,
         'vmax': Z_MAX,
         'interpolation': 'spline16'}
+    return plot_args
+
+
+def get_plot_args_quiver():
+    plot_args = {
+        'color': 'black',
+        # 'scale': 0.01}
+        'width': 0.002}
     return plot_args
 
 
