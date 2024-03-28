@@ -115,6 +115,7 @@ void BC_salinity(double* S, Prm prm) {
     S(i, 0) = -S(i, 1);
     // top boundary: \partial_y S = flow_S
     S(i, prm.NY - 1) = S(i, prm.NY - 2) + prm.dy * flux_S(x(i), prm);
+    // S(i, prm.NY - 1) = S(i, prm.NY - 2) + prm.dy * flux_S(x(i), prm);
   }
   for (int j = 0; j < prm.NY; j++) {
     // left boundary: \partial_x S = 0
@@ -128,12 +129,22 @@ void BC_salinity(double* S, Prm prm) {
   }
 }
 
+// double flux_T(double x, Prm prm) {
+//   return prm.A_T * cos(2 * M_PI * x / prm.L);
+// }
+
+// double flux_S(double x, Prm prm) {
+//   return prm.A_S * cos(2 * M_PI * x / prm.L);
+// }
+
 double flux_T(double x, Prm prm) {
-  return prm.A_T * cos(2 * M_PI * x / prm.L);
+  double aux = 2 * M_PI / prm.L;
+  return -aux * prm.A_T * cos(aux * x) / tanh(aux * prm.H);
 }
 
 double flux_S(double x, Prm prm) {
-  return prm.A_S * cos(2 * M_PI * x / prm.L);
+  double aux = 2 * M_PI / prm.L;
+  return -aux * prm.A_S * cos(aux * x) / tanh(aux * prm.H);
 }
 
 void buildPoissonMatrix(vector<Trip>& coeffs, Prm prm) {

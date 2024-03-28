@@ -97,19 +97,19 @@ int main(void) {
   double fraction_completed = prm.T / 100.;  // fraction of the integration time to print
 
   // allocate memory
-  double* u = new double[prm.NXNY];        // x component of velocity
-  double* ustar = new double[prm.NXNY];    // x component of velocity
-  double* adv_u = new double[prm.NXNY];    // advection term of u
-  double* v = new double[prm.NXNY];        // y component of velocity
-  double* vstar = new double[prm.NXNY];    // y component of velocity
-  double* adv_v = new double[prm.NXNY];    // advection term of v
-  double* p = new double[prm.NXNY];        // pressure
-  double* T = new double[prm.NXNY];        // temperature
-  double* T_eq = new double[prm.NXNY];     // equilibrium temperature
-  double* Delta_T = new double[prm.NXNY];  // Delta_T
-  double* S = new double[prm.NXNY];        // salinity
-  double* S_eq = new double[prm.NXNY];     // equilibrium salinity
-  double* Delta_S = new double[prm.NXNY];  // Delta_S
+  double* u = new double[prm.NXNY];      // x component of velocity
+  double* ustar = new double[prm.NXNY];  // x component of velocity
+  double* adv_u = new double[prm.NXNY];  // advection term of u
+  double* v = new double[prm.NXNY];      // y component of velocity
+  double* vstar = new double[prm.NXNY];  // y component of velocity
+  double* adv_v = new double[prm.NXNY];  // advection term of v
+  double* p = new double[prm.NXNY];      // pressure
+  double* T = new double[prm.NXNY];      // temperature
+  // double* T_eq = new double[prm.NXNY];     // equilibrium temperature
+  // double* Delta_T = new double[prm.NXNY];  // Delta_T
+  double* S = new double[prm.NXNY];  // salinity
+  // double* S_eq = new double[prm.NXNY];     // equilibrium salinity
+  // double* Delta_S = new double[prm.NXNY];  // Delta_S
 
   // initialize to 0
   for (int i = 0; i < prm.NXNY; i++) {
@@ -121,14 +121,15 @@ int main(void) {
     adv_v[i] = 0;
     p[i] = 0;
     T[i] = 0;
-    T_eq[i] = 0;
-    Delta_T[i] = 0;
+    // T_eq[i] = 0;
+    // Delta_T[i] = 0;
     S[i] = 0;
-    S_eq[i] = 0;
-    Delta_S[i] = 0;
+    // S_eq[i] = 0;
+    // Delta_S[i] = 0;
   }
   // Set T(x, y) = y * A_T * cos(pi * x / L) * sinh(pi * y / L)
   // Set S(x, y) = y * A_S * cos(pi * x / L) * sinh(pi * y / L)
+  double aux = 2 * M_PI / prm.L;
   for (int i = 0; i < prm.NX; i++) {
     for (int j = 0; j < prm.NY; j++) {
       // the sinh(pi * y / L) term is a normalization factor for the derivative (it)
@@ -142,18 +143,28 @@ int main(void) {
       // for Rayleigh-Benard convection
       // T_eq(i, j) = y(j) * prm.A_T / prm.H;
       // T_eq(i, j) = (prm.H - y(j)) * prm.A_T / prm.H;
-      T_eq(i, j) = prm.A_T * cos(2 * M_PI * x(i) / prm.L) * sinh(2 * M_PI * y(j) / prm.L);
-      T(i, j) = y(j) * prm.A_T / prm.H;
-      S_eq(i, j) = prm.A_S * cos(2 * M_PI * x(i) / prm.L) * sinh(2 * M_PI * y(j) / prm.L);
-      S(i, j) = (prm.H - y(j)) * prm.A_S / prm.H;
+      // T_eq(i, j) = prm.A_T * cos(2 * M_PI * x(i) / prm.L) * sinh(2 * M_PI * y(j) / prm.L);
+      // T(i, j) = T_eq(i, j);
+      // S_eq(i, j) = prm.A_S * cos(2 * M_PI * x(i) / prm.L) * sinh(2 * M_PI * y(j) / prm.L);
+      // S(i, j) = S_eq(i, j);
+      // T_eq(i, j) = prm.A_T * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
+      // T(i, j) = T_eq(i, j);
+      // S_eq(i, j) = prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
+      // S(i, j) = S_eq(i, j);
+
+      // T(i, j) = -prm.A_T * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
+      // S(i, j) = -prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
+
+      T(i, j) = sin(M_PI * y(j) / prm.H);
+      S(i, j) = sin(M_PI * y(j) / prm.H);
     }
   }
   // hot spot in the middle
-  for (int i = prm.NX / 4; i < 3 * prm.NX / 4; i++) {
-    for (int j = prm.NY / 4; j < 3 * prm.NY / 4; j++) {
-      T(i, j) += prm.A_T;
-    }
-  }
+  // for (int i = prm.NX / 4; i < 3 * prm.NX / 4; i++) {
+  //   for (int j = prm.NY / 4; j < 3 * prm.NY / 4; j++) {
+  //     T(i, j) += prm.A_T;
+  //   }
+  // }
 
   string filename_out = "output/prova.txt";
   ofstream file_out;
@@ -232,7 +243,7 @@ int main(void) {
         rhs_u = ADV_U(i, j) + prm.dt * prm.Pr * lap;
         lap = (V(i + 1, j) - 2 * V(i, j) + V(i - 1, j)) / (prm.dx * prm.dx) +
               (V(i, j + 1) - 2 * V(i, j) + V(i, j - 1)) / (prm.dy * prm.dy);
-        buoy = prm.Ra_T * (Delta_T(i, j) - Delta_S(i, j) / prm.R_rho);
+        buoy = prm.Ra_T * (T(i, j) - S(i, j) / prm.R_rho);
         // only temperature
         // buoy = prm.Ra_T * (T(i, j) - T_eq(i, j));
         // buoy = prm.Ra_T * (T(i, j));
@@ -371,12 +382,12 @@ int main(void) {
     START_TIMER();
     BC_temperature(T, prm);
     BC_salinity(S, prm);
-    for (int i = 0; i < prm.NX; i++) {
-      for (int j = 0; j < prm.NY; j++) {
-        Delta_T(i, j) = T(i, j) - T_eq(i, j);
-        Delta_S(i, j) = S(i, j) - S_eq(i, j);
-      }
-    }
+    // for (int i = 0; i < prm.NX; i++) {
+    //   for (int j = 0; j < prm.NY; j++) {
+    //     Delta_T(i, j) = T(i, j) - T_eq(i, j);
+    //     Delta_S(i, j) = S(i, j) - S_eq(i, j);
+    //   }
+    // }
     END_TIMER();
     ADD_TIME_TO(total_boundary);
 
@@ -385,7 +396,7 @@ int main(void) {
     // ---------- printing to file ------------
     START_TIMER();
     if (WRITE_ANIM()) {
-      saveDataToHDF5(plot_count, u, v, Delta_T, Delta_S, p, prm.NX, prm.NY, t);
+      saveDataToHDF5(plot_count, u, v, T, S, p, prm.NX, prm.NY, t);
 #ifdef write
       file_out << "final T" << endl;
       write_sol(file_out, T, t, prm, true);
