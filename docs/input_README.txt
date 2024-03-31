@@ -10,6 +10,7 @@ Ra_T                    Rayleigh number for temperature. Positive real number.
 Ra_S                    Rayleigh number for salinity. Positive real number.
 A_T                     Amplitude of the temperature flow at the top boundary. Positive real number.
 A_S                     Amplitude of the salinity flow at the top boundary. Positive real number.
+periodic_x              Whether the flow is periodic in the x-direction or not (Neumann boundary conditions). Boolean: 1 (yes) or 0 (no).
 plot                    Variable to be plotted. String: 'T' (temperature), 'S' (salinity), 'uv' (modulus of the velocity), 'u' (first component of the velocity), 'v' (second component of the velocity), 'p' (pressure)
 plot_dt                 Time step for the animation (print solution each animation_dt time-steps). Positive integer.
 animation               Whether to animate the solution or not. Boolean: 1 (yes) or 0 (no).

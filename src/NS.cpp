@@ -53,18 +53,22 @@ void BC_velocity(double* u, double* v, Prm prm) {
   }
 
   for (int j = 0; j < prm.NY; j++) {
-    // left boundary: \partial_x u = 0, \partial_x v = 0
-    // U(0, j) = U(1, j);
-    // V(0, j) = V(1, j);
-    // periodic BC
-    U(0, j) = U(prm.NX - 2, j);
-    V(0, j) = V(prm.NX - 2, j);
-    // right boundary: \partial_x u = 0, \partial_x v = 0
-    // U(prm.NX - 1, j) = U(prm.NX - 2, j);
-    // V(prm.NX - 1, j) = V(prm.NX - 2, j);
-    // periodic BC
-    U(prm.NX - 1, j) = U(1, j);
-    V(prm.NX - 1, j) = V(1, j);
+    if (prm.periodic_x) {  // periodic BC
+      // left boundary
+      U(0, j) = U(prm.NX - 2, j);
+      V(0, j) = V(prm.NX - 2, j);
+      // right boundary
+      U(prm.NX - 1, j) = U(1, j);
+      V(prm.NX - 1, j) = V(1, j);
+    } else {
+      // left boundary: \partial_x u = 0, \partial_x v = 0
+      U(0, j) = U(1, j);
+      V(0, j) = V(1, j);
+
+      // right boundary: \partial_x u = 0, \partial_x v = 0
+      U(prm.NX - 1, j) = U(prm.NX - 2, j);
+      V(prm.NX - 1, j) = V(prm.NX - 2, j);
+    }
   }
 }
 
@@ -76,17 +80,20 @@ void BC_pressure(double* p, Prm prm) {
     P(i, prm.NY - 1) = P(i, prm.NY - 2);
   }
   for (int j = 0; j < prm.NY; j++) {
-    // left boundary: \partial_x p = 0
-    // P(0, j) = P(1, j);
-    // periodic BC
-    P(0, j) = P(prm.NX - 2, j);
-    // right boundary: \partial_x p = 0
-    // P(prm.NX - 1, j) = P(prm.NX - 2, j);
-    // periodic BC
-    P(prm.NX - 1, j) = P(1, j);
+    if (prm.periodic_x) {  // periodic BC
+      // left boundary
+      P(0, j) = P(prm.NX - 2, j);
+      // right boundary
+      P(prm.NX - 1, j) = P(1, j);
+    } else {
+      // left boundary: \partial_x p = 0
+      P(0, j) = P(1, j);
+      // right boundary: \partial_x p = 0
+      P(prm.NX - 1, j) = P(prm.NX - 2, j);
+      // CHANGE ON POINT TO DIRICHLET
+      P(1, 0) = -P(1, 1);
+    }
   }
-  // CHANGE ON POINT TO DIRICHLET
-  // P(1, 0) = -P(1, 1);
 }
 
 void BC_temperature(double* T, Prm prm) {
@@ -98,14 +105,17 @@ void BC_temperature(double* T, Prm prm) {
     // T(i, prm.NY - 1) = -T(i, prm.NY - 2);
   }
   for (int j = 0; j < prm.NY; j++) {
-    // left boundary: \partial_x T = 0
-    // T(0, j) = T(1, j);
-    // periodic BC
-    T(0, j) = T(prm.NX - 2, j);
-    // right boundary: \partial_x T = 0
-    // T(prm.NX - 1, j) = T(prm.NX - 2, j);
-    // periodic BC
-    T(prm.NX - 1, j) = T(1, j);
+    if (prm.periodic_x) {  // periodic BC
+      // left boundary
+      T(0, j) = T(prm.NX - 2, j);
+      // right boundary
+      T(prm.NX - 1, j) = T(1, j);
+    } else {
+      // left boundary: \partial_x T = 0
+      T(0, j) = T(1, j);
+      // right boundary: \partial_x T = 0
+      T(prm.NX - 1, j) = T(prm.NX - 2, j);
+    }
   }
 }
 
@@ -115,27 +125,21 @@ void BC_salinity(double* S, Prm prm) {
     S(i, 0) = -S(i, 1);
     // top boundary: \partial_y S = flow_S
     S(i, prm.NY - 1) = S(i, prm.NY - 2) + prm.dy * flux_S(x(i), prm);
-    // S(i, prm.NY - 1) = S(i, prm.NY - 2) + prm.dy * flux_S(x(i), prm);
   }
   for (int j = 0; j < prm.NY; j++) {
-    // left boundary: \partial_x S = 0
-    // S(0, j) = S(1, j);
-    // periodic BC
-    S(0, j) = S(prm.NX - 2, j);
-    // right boundary: \partial_x S = 0
-    // S(prm.NX - 1, j) = S(prm.NX - 2, j);
-    // periodic BC
-    S(prm.NX - 1, j) = S(1, j);
+    if (prm.periodic_x) {  // periodic BC
+      // left boundary
+      S(0, j) = S(prm.NX - 2, j);
+      // right boundary
+      S(prm.NX - 1, j) = S(1, j);
+    } else {
+      // left boundary: \partial_x T = 0
+      S(0, j) = S(1, j);
+      // right boundary: \partial_x T = 0
+      S(prm.NX - 1, j) = S(prm.NX - 2, j);
+    }
   }
 }
-
-// double flux_T(double x, Prm prm) {
-//   return prm.A_T * cos(2 * M_PI * x / prm.L);
-// }
-
-// double flux_S(double x, Prm prm) {
-//   return prm.A_S * cos(2 * M_PI * x / prm.L);
-// }
 
 double flux_T(double x, Prm prm) {
   double aux = 2 * M_PI / prm.L;
@@ -259,7 +263,9 @@ void buildPoissonMatrix(vector<Trip>& coeffs, Prm prm) {
     diagX = -2. * dx_2;
     diagY = -2. * dy_2;
     if (i % prm.ny == 0 || i % prm.ny == prm.ny - 1) diagY = -dy_2;
-    // if (i < prm.ny || i >= dim - prm.ny) diagX = -dx_2;
+    if (!prm.periodic_x) {
+      if (i < prm.ny || i >= dim - prm.ny) diagX = -dx_2;
+    }
 
     coeffs.push_back(Trip(i, i, -diagX - diagY));
 
@@ -275,14 +281,189 @@ void buildPoissonMatrix(vector<Trip>& coeffs, Prm prm) {
       coeffs.push_back(Trip(i + 1, i, -dy_2));  // lower diagonal
     }
   }
-  // coeffs.push_back(Trip(0, 0, -2 * dy_2));
-  // coeffs.push_back(Trip(0, 1, dy_2));
-  // coeffs.push_back(Trip(1, 0, dy_2));
+  if (prm.periodic_x) {  // periodic BC
+    for (int i = 0; i < prm.ny; i++) {
+      coeffs.push_back(Trip(i + prm.ny * (prm.nx - 1), i, -dx_2));  // top row
+      coeffs.push_back(Trip(i, i + prm.ny * (prm.nx - 1), -dx_2));  // bottom row
+    }
+  } else {
+    coeffs.push_back(Trip(0, 0, 2 * dy_2));  // we impose Dirichlet BC on the first element (bottom left corner) Thus, we change -1 | 2 -1 = 0 | 1 -1 (in Neumann) to -1 | 2 -1 = 0 | 2 -1 (in Dirichlet)
+  }
+}
+void buildPoissonMatrix_V(vector<Trip>& coeffs, double lambda, double mu, Prm prm) {
+  coeffs.reserve((uint)(5 * prm.nx * prm.ny - 2 * (prm.ny + prm.nx) + 2 * prm.ny));
+  int dim = prm.nx * prm.ny;
+  double diagX, diagY;
 
-  // periodic BC
-  for (int i = 0; i < prm.ny; i++) {
-    coeffs.push_back(Trip(i + prm.ny * (prm.nx - 1), i, -dx_2));  // top row
-    coeffs.push_back(Trip(i, i + prm.ny * (prm.nx - 1), -dx_2));  // bottom row
+  cout << "lambda: " << lambda << " mu: " << mu << endl;
+
+  for (int i = 0; i < dim; i++) {
+    // diagonal
+    diagX = 2 * lambda;
+    diagY = 2 * mu;
+    if (i % prm.ny == 0 || i % prm.ny == prm.ny - 1) diagY = 3 * mu;
+    if (!prm.periodic_x) {
+      if (i < prm.ny || i >= dim - prm.ny) diagX = lambda;
+    }
+
+    coeffs.push_back(Trip(i, i, 1 + diagX + diagY));
+
+    // Dxx part (secondary diagonals)
+    if (i < dim - prm.ny) {
+      coeffs.push_back(Trip(i, i + prm.ny, -lambda));  // upper diagonal
+      coeffs.push_back(Trip(i + prm.ny, i, -lambda));  // lower diagonal
+    }
+
+    // Dyy part (secondary diagonals)
+    if ((i + 1) % prm.ny != 0) {
+      coeffs.push_back(Trip(i, i + 1, -mu));  // upper diagonal
+      coeffs.push_back(Trip(i + 1, i, -mu));  // lower diagonal
+    }
+  }
+  if (prm.periodic_x) {  // periodic BC
+    for (int i = 0; i < prm.ny; i++) {
+      coeffs.push_back(Trip(i + prm.ny * (prm.nx - 1), i, -lambda));  // top row
+      coeffs.push_back(Trip(i, i + prm.ny * (prm.nx - 1), -lambda));  // bottom row
+    }
+  }
+}
+
+void buildPoissonMatrix_UTS(vector<Trip>& coeffs, double lambda, double mu, Prm prm) {
+  // Remeber we are taking the following BC for the pressure:
+  // on the top, bottom the normal derivative of the pressure is 0, i.e.:  P(i, NY - 1) = P(i, NY - 2)
+  //                                                                   m    P(i, 0) = P(i, 1);
+  // On the right and left boundary, the pressure is peridic, i.e.: P(0, j) = P(NX - 2, j)
+  //                                                                P(NX - 1, j) = P(1, j)
+  // Also, note that the coefficients are ordered by column, i.e. the first NY elements are the first column, the next NY elements are the second column, and so on.
+  // The matrix has size (nx * ny) x (nx * ny), where nx = NX - 2 and ny = NY - 2 (i.e. the number of points in the domain minus the ghost points).
+  // Matrix for the 2nd derivative in x (except for the division by dx^2)
+  //  ------ ny ------
+  // ||-----------------------------------------------------------------------------------------||
+  // || -2           |  1           |                                            | 1            || |
+  // ||   -2         |    1         |                                            |   1          || |
+  // ||      .       |      .       |                                            |     .        || ny
+  // ||        .     |        .     |                                            |       .      || |
+  // ||          .   |          .   |                                            |         .    || |
+  // ||           -2 |            1 |                                            |           1  || |
+  // ||-----------------------------------------------------------------------------------------||
+  // || 1            | -2           | 1            |                                            ||
+  // ||   1          |   -2         |   1          |                                            ||
+  // ||      .       |      .       |      .       |                                            ||
+  // ||        .     |        .     |        .     |                                            ||
+  // ||          .   |          .   |          .   |                                            ||
+  // ||            1 |           -2 |            1 |                                            ||
+  // ||-----------------------------------------------------------------------------------------||
+  // ||              | 1            | -2           | 1            |                             ||
+  // ||              |   1          |   -2         |   1          |                             ||
+  // ||              |      .       |      .       |      .       |                             ||
+  // ||              |        .     |        .     |        .     |                             ||
+  // ||              |          .   |          .   |          .   |                             ||
+  // ||              |            1 |           -2 |            1 |                             ||
+  // ||-----------------------------------------------------------------------------------------||
+  // ||                             |  .           |  .           |  .           |              ||
+  // ||                             |    .         |    .         |    .         |              ||
+  // ||                             |      .       |      .       |      .       |              ||
+  // ||                             |        .     |        .     |        .     |              ||
+  // ||                             |          .   |          .   |          .   |              ||
+  // ||                             |            . |            . |            . |              ||
+  // ||-----------------------------------------------------------------------------------------||
+  // ||                                            | 1            | -2           | 1            ||
+  // ||                                            |   1          |   -2         |   1          ||
+  // ||                                            |      .       |      .       |      .       ||
+  // ||                                            |        .     |        .     |        .     ||
+  // ||                                            |          .   |          .   |          .   ||
+  // ||                                            |            1 |           -2 |            1 ||
+  // ||-----------------------------------------------------------------------------------------||
+  // || 1            |                                            | 1            | -2           ||
+  // ||   1          |                                            |   1          |   -2         ||
+  // ||     .        |                                            |      .       |      .       ||
+  // ||       .      |                                            |        .     |        .     ||
+  // ||         .    |                                            |          .   |          .   ||
+  // ||           1  |                                            |            1 |           -2 ||
+  // ||-----------------------------------------------------------------------------------------||
+
+  // Matrix for the 2nd derivative in y (except for the division by dy^2)
+  //  --------- ny --------
+  // ||------------------------------------------------------------------------------------||
+  // || -1  1              |                                                               || |
+  // ||  1 -2  1           |                                                               || |
+  // ||    1 -2  1         |                                                               || |
+  // ||      .  .  .       |                                                               || ny
+  // ||        .  .  .     |                                                               || |
+  // ||          .  .  .   |                                                               || |
+  // ||            1 -2  1 |                                                               || |
+  // ||               1 -1 |                                                               || |
+  // ||------------------------------------------------------------------------------------||
+  // ||                    | -1  1              |                                          ||
+  // ||                    |  1 -2  1           |                                          ||
+  // ||                    |    1 -2  1         |                                          ||
+  // ||                    |      .  .  .       |                                          ||
+  // ||                    |        .  .  .     |                                          ||
+  // ||                    |          .  .  .   |                                          ||
+  // ||                    |            1 -2  1 |                                          ||
+  // ||                    |               1 -1 |                                          ||
+  // ||------------------------------------------------------------------------------------||
+  // ||                                          |   .                |                    ||
+  // ||                                          |     .              |                    ||
+  // ||                                          |       .            |                    ||
+  // ||                                          |         .          |                    ||
+  // ||                                          |           .        |                    ||
+  // ||                                          |             .      |                    ||
+  // ||                                          |               .    |                    ||
+  // ||                                          |                 .  |                    ||
+  // ||------------------------------------------------------------------------------------||
+  // ||                                                               | -1  1              ||
+  // ||                                                               |  1 -2  1           ||
+  // ||                                                               |    1 -2  1         ||
+  // ||                                                               |      .  .  .       ||
+  // ||                                                               |        .  .  .     ||
+  // ||                                                               |          .  .  .   ||
+  // ||                                                               |            1 -2  1 ||
+  // ||                                                               |               1 -1 ||
+  // ||------------------------------------------------------------------------------------||
+
+  // number of non-zero coefficients in the Poi matrix
+  // dx -> 3 * ny * (nx - 2) + 2 * (2 * ny) = ny * (3 * nx - 2)
+  // dy -> (3 * ny - 2) * nx
+  // common (diag) -> nx * ny
+  // total = dx + dy - common = 5 * nx * ny - 2 * ny - 2 * nx
+  // we add one for the Dirichlet BC
+
+  coeffs.reserve((uint)(5 * prm.nx * prm.ny - 2 * (prm.ny + prm.nx) + 2 * prm.ny));
+  int dim = prm.nx * prm.ny;
+  double diagX, diagY;
+
+  cout << "lambda: " << lambda << " mu: " << mu << endl;
+
+  for (int i = 0; i < dim; i++) {
+    // diagonal
+    diagX = 2 * lambda;
+    diagY = 2 * mu;
+    if (i % prm.ny == 0) diagY = 3 * mu;
+    if (i % prm.ny == prm.ny - 1) diagY = mu;
+    if (!prm.periodic_x) {
+      if (i < prm.ny || i >= dim - prm.ny) diagX = lambda;
+    }
+
+    coeffs.push_back(Trip(i, i, 1 + diagX + diagY));
+
+    // Dxx part (secondary diagonals)
+    if (i < dim - prm.ny) {
+      coeffs.push_back(Trip(i, i + prm.ny, -lambda));  // upper diagonal
+      coeffs.push_back(Trip(i + prm.ny, i, -lambda));  // lower diagonal
+    }
+
+    // Dyy part (secondary diagonals)
+    if ((i + 1) % prm.ny != 0) {
+      coeffs.push_back(Trip(i, i + 1, -mu));  // upper diagonal
+      coeffs.push_back(Trip(i + 1, i, -mu));  // lower diagonal
+    }
+  }
+  if (prm.periodic_x) {  // periodic BC
+    for (int i = 0; i < prm.ny; i++) {
+      coeffs.push_back(Trip(i + prm.ny * (prm.nx - 1), i, -lambda));  // top row
+      coeffs.push_back(Trip(i, i + prm.ny * (prm.nx - 1), -lambda));  // bottom row
+    }
   }
 }
 

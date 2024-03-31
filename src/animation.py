@@ -110,8 +110,8 @@ def animate(folder_path: str, save: bool = False):
 
     if save:
         # Save the animation
-        filename = 'data/videos/' + plot_var + '_Pr=' + str(Pr) + '_Sc=' + str(Sc) + '_Le=' + str(
-            Le) + '_Ra_T=' + str(Ra_T) + '_Ra_S=' + str(Ra_S) + '_R_rho=' + str(R_rho) + '.mp4'
+        filename = 'data/videos/' + plot_var + '_Pr=' + str(Pr) + '_Le=' + str(
+            Le) + '_Ra_T=' + str(Ra_T) + '_R_rho=' + str(R_rho) + '.mp4'
         ani.save(filename, writer='ffmpeg', dpi=300, fps=FPS)
     else:
         # Show the animation
@@ -126,7 +126,7 @@ folder_results = 'output/results/'
 folder_object = 'config/'
 
 # Read data
-NX, NY, LX, LY, Pr, Sc, Le, Ra_T, Ra_S, R_rho, dx, dy, dt, Tfinal, animation_on, plot_var = readSetupFromHDF5(
+NX, NY, LX, LY, Pr, Le, Ra_T, R_rho, dx, dy, dt, Tfinal, animation_on, plot_var = readSetupFromHDF5(
     folder_results + '../setup.h5')
 
 if animation_on == False:

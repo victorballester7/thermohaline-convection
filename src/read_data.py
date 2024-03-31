@@ -90,18 +90,16 @@ def readSetupFromHDF5(hdf5_file):
         LX = file['L'][()].item()
         LY = file['H'][()].item()
         Pr = file['Pr'][()].item()
-        Sc = file['Sc'][()].item()
         Le = file['Le'][()].item()
         Ra_T = file['Ra_T'][()].item()
-        Ra_S = file['Ra_S'][()].item()
         R_rho = file['R_rho'][()].item()
         dx = file['dx'][()].item()
         dy = file['dy'][()].item()
         dt = file['dt'][()].item()
-        T = file['T'][()].item()
+        Tfinal = file['Tfinal'][()].item()
         animation_on = bool(file['animation_on'][()].item())
         plot_var = file['plot_var'][()].item().decode('utf-8')
-    return NX, NY, LX, LY, Pr, Sc, Le, Ra_T, Ra_S, R_rho, dx, dy, dt, T, animation_on, plot_var
+    return NX, NY, LX, LY, Pr, Le, Ra_T, R_rho, dx, dy, dt, Tfinal, animation_on, plot_var
 
 
 def readSolutionFromHDF5(hdf5_file):
