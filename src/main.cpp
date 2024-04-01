@@ -15,15 +15,17 @@
 using namespace Eigen;
 using namespace std;
 
+#define fullsimulation 1
+
 #define EPS 1e-8
 
 #define START_TIMER() begin = chrono::steady_clock::now()
 #define END_TIMER() end = chrono::steady_clock::now()
 #define ADD_TIME_TO(x) x += chrono::duration_cast<chrono::microseconds>(end - begin).count()
 
-#define WRITE_ANIM() ((t - EPS < plot_count * plot_dt) && (t + EPS > plot_count * plot_dt))
+#define WRITE_ANIM() (animation && (t - EPS < plot_count * plot_dt) && (t + EPS > plot_count * plot_dt))
 
-int main(void) {
+int main(int argc, char* argv[]) {
   const string filename_input = "config/input.txt";  // name of the input file to read the parameters
   const string space = "    ";                       // space to print
   const uint per = 10;                               // progress percentage interval to print (each count%)
@@ -37,6 +39,12 @@ int main(void) {
           total_others = 0, total_build_poisson = 0, total_solve_laplace = 0,
           total_boundary = 0;                   // variables to measure the time
   chrono::steady_clock::time_point begin, end;  // variables to measure the time
+
+  bool remove_cout = false;
+  // if one argument is passed
+  if (argc == 2) {
+    remove_cout = true;
+  }
 
   // ------------- File input setup ----------------
   START_TIMER();
@@ -76,19 +84,24 @@ int main(void) {
   prm.nxny = (uint)(prm.nx * prm.ny);
   // -------------------------------------------
 
-  // ------------- Print plot setup -----------------
-  cout << "dx:            " << space << prm.dx << endl;
-  cout << "dy:            " << space << prm.dy << endl;
-  cout << "dt:            " << space << prm.dt << endl;
-  cout << "Tfinal:        " << space << prm.Tfinal << endl;
-  cout << "Pr:            " << space << prm.Pr << endl;
-  cout << "Le:            " << space << prm.Le << endl;
-  cout << "Ra_T:          " << space << prm.Ra_T << endl;
-  cout << "R_rho:         " << space << prm.R_rho << endl;
-  cout << "Plot animation?" << space << (animation ? "yes" : "no") << ((plot_var == "u" || plot_var == "v" || plot_var == "uv") ? " (velocity)" : (plot_var == "T" ? " (temperature)" : (plot_var == "S" ? " (salinity)" : " (pressure)"))) << endl;
-  // ------------------------------------------------
-
+  if (!remove_cout) {
+    // ------------- Print plot setup -----------------
+    cout << "dx:            " << space << prm.dx << endl;
+    cout << "dy:            " << space << prm.dy << endl;
+    cout << "dt:            " << space << prm.dt << endl;
+    cout << "Tfinal:        " << space << prm.Tfinal << endl;
+    cout << "Pr:            " << space << prm.Pr << endl;
+    cout << "Le:            " << space << prm.Le << endl;
+    cout << "Ra_T:          " << space << prm.Ra_T << endl;
+    cout << "R_rho:         " << space << prm.R_rho << endl;
+    cout << "Plot animation?" << space << (animation ? "yes" : "no") << ((plot_var == "u" || plot_var == "v" || plot_var == "uv") ? " (velocity)" : (plot_var == "T" ? " (temperature)" : (plot_var == "S" ? " (salinity)" : " (pressure)"))) << endl;
+    // ------------------------------------------------
+  } else {
+    cout << "Le = " << prm.Le << " R_rho = " << prm.R_rho << endl;
+  }
   double t = 0.0, mean = 0;
+  double meanFluxV_0 = 0, meanFluxV_1 = 0;
+  bool changed = false;
   uint numSteps = 0;
   double fraction_completed = prm.Tfinal / 100.;  // fraction of the integration time to print
 
@@ -156,7 +169,7 @@ int main(void) {
     }
   }
 
-  saveSetupToHDF5(prm, plot_var, animation);
+  saveSetupToHDF5(prm, plot_var, animation, plot_dt);
   saveDataToHDF5(plot_count, u, v, T, S, p, prm.NX, prm.NY, t);
   plot_count++;
   END_TIMER();
@@ -178,7 +191,7 @@ int main(void) {
   lambdaS = prm.dt / (prm.dx * prm.dx) / prm.Le;
   muT = prm.dt / (prm.dy * prm.dy);
   muS = prm.dt / (prm.dy * prm.dy) / prm.Le;
-  buildPoissonMatrix(coeffsP, prm);
+  buildPoissonMatrixP(coeffsP, prm);
   buildPoissonMatrix_UTS(coeffsU, lambdaU, muU, prm);
   buildPoissonMatrix_UTS(coeffsT, lambdaT, muT, prm);
   buildPoissonMatrix_UTS(coeffsS, lambdaS, muS, prm);
@@ -437,6 +450,13 @@ int main(void) {
     END_TIMER();
     ADD_TIME_TO(total_boundary);
 
+    if (meanFluxV_0 * meanFluxV_1 < 0) {
+      cout << "Change (t = " << t << "): " << (meanFluxV_0 < 0 ? "S -> T" : "T -> S") << endl;
+      changed = true;
+    }
+    meanFluxV_0 = meanFluxV_1;
+    meanFluxV_1 = meanFluxV(v, prm);
+
     t += prm.dt;
 
     // ---------- printing to file ------------
@@ -446,7 +466,7 @@ int main(void) {
       plot_count++;
     }
 
-    if (t > fraction_completed * count - EPS) {
+    if (t > fraction_completed * count - EPS && !remove_cout) {
       cout << count << "%"
            << " dt: " << prm.dt << endl;
       count += per;
@@ -458,15 +478,21 @@ int main(void) {
     numSteps++;
   }
 
-  print("Total time for files:                   " + space, total_files);
-  print("Total time for build laplace:           " + space, total_build_poisson);
-  print("Total time for advection:               " + space, total_advection);
-  print("Total time for diffusion:               " + space, total_diffusion);
-  print("Total time for solve laplace:           " + space, total_solve_laplace);
-  print("Total time for boundary:                " + space, total_boundary);
-  print("Total time for rest:                    " + space, total_others);
-  printf("-----------------------------------------------------------\n");
-  print("Total time:                             " + space, total_files + total_advection + total_diffusion + total_others + total_build_poisson + total_solve_laplace + total_boundary);
+  if (!remove_cout) {
+    print("Total time for files:                   " + space, total_files);
+    print("Total time for build laplace:           " + space, total_build_poisson);
+    print("Total time for advection:               " + space, total_advection);
+    print("Total time for diffusion:               " + space, total_diffusion);
+    print("Total time for solve laplace:           " + space, total_solve_laplace);
+    print("Total time for boundary:                " + space, total_boundary);
+    print("Total time for rest:                    " + space, total_others);
+    printf("-----------------------------------------------------------\n");
+    print("Total time:                             " + space, total_files + total_advection + total_diffusion + total_others + total_build_poisson + total_solve_laplace + total_boundary);
+  } else {
+    if (!changed) {
+      cout << "No change: " << (meanFluxV_0 < 0 ? "S" : "T") << endl;
+    }
+  }
 
   // free memory
   delete[] u;

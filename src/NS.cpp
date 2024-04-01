@@ -151,7 +151,7 @@ double flux_S(double x, Prm prm) {
   return -aux * prm.A_S * cos(aux * x) / tanh(aux * prm.H);
 }
 
-void buildPoissonMatrix(vector<Trip>& coeffs, Prm prm) {
+void buildPoissonMatrixP(vector<Trip>& coeffs, Prm prm) {
   // Remeber we are taking the following BC for the pressure:
   // on the top, bottom the normal derivative of the pressure is 0, i.e.:  P(i, NY - 1) = P(i, NY - 2)
   //                                                                       P(i, 0) = P(i, 1);
@@ -295,8 +295,6 @@ void buildPoissonMatrix_V(vector<Trip>& coeffs, double lambda, double mu, Prm pr
   int dim = prm.nx * prm.ny;
   double diagX, diagY;
 
-  cout << "lambda: " << lambda << " mu: " << mu << endl;
-
   for (int i = 0; i < dim; i++) {
     // diagonal
     diagX = 2 * lambda;
@@ -433,8 +431,6 @@ void buildPoissonMatrix_UTS(vector<Trip>& coeffs, double lambda, double mu, Prm 
   int dim = prm.nx * prm.ny;
   double diagX, diagY;
 
-  cout << "lambda: " << lambda << " mu: " << mu << endl;
-
   for (int i = 0; i < dim; i++) {
     // diagonal
     diagX = 2 * lambda;
@@ -518,4 +514,13 @@ void crankNicholson(double* T, double* adv_T, double* S, double* adv_S, Prm prm)
     std::cerr << "Salinity did not converge in " << max_iter << " iterations. Error: " << errorLoo << std::endl;
     exit(1);
   }
+}
+
+double meanFluxV(double* v, Prm prm) {
+  int I0 = 5 * prm.NX / 12;
+  int I1 = 7 * prm.NX / 12;
+  int J = prm.NY / 2;
+  double mean = 0;
+  for (int i = I0; i < I1; i++) mean += V(i, J);
+  return mean / (I1 - I0);
 }

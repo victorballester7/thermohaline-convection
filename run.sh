@@ -24,12 +24,17 @@ else
   rm -rf output/results/*
 fi
 rm -rf output/*.h5
-./bin/main
+./bin/main $1
 if [ $? -ne 0 ]; then
   echo -e "${RED}Running failed!${RESET}"
   exit 1
 fi
 echo -e "${GREEN}Running done!${RESET}"
+
+# if there is an argument in $1, do not animate
+if [ -n "$1" ]; then
+  exit 0
+fi
 
 echo -e "${YELLOW}Animating...${RESET}"
 # use python3 if you have it installed, otherwise use python

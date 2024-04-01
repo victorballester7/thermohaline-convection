@@ -54,17 +54,17 @@ void print(string str, int64_t time) {
 // @param object_type type of the object
 // @param vorticity_on boolean to check whether we want to plot the vorticity on the animation by default or not
 // @param animation_on boolean to check whether we want to plot the animation or not
-void saveSetupToHDF5(Prm prm, string plot_var, bool animation_on) {
+void saveSetupToHDF5(Prm prm, string plot_var, bool animation_on, double plot_dt) {
   string filename = "output/setup.h5";
-  const H5std_string DATASET_NAMES[] = {"NX", "NY", "L", "H", "Pr", "Le", "Ra_T", "R_rho", "dx", "dy", "dt", "Tfinal", "animation_on"};
-  int num_datasets = 13;
+  const H5std_string DATASET_NAMES[] = {"NX", "NY", "L", "H", "Pr", "Le", "Ra_T", "R_rho", "dx", "dy", "dt", "Tfinal", "animation_on", "plot_dt"};
+  int num_datasets = 14;
   try {
     H5File file(filename, H5F_ACC_TRUNC);
     hsize_t dims_scalar[1] = {1};
     DataSpace scalar_dataspace(1, dims_scalar);
 
     // Create and write datasets for the variables
-    double datasets[] = {(double)prm.NX, (double)prm.NY, prm.L, prm.H, prm.Pr, prm.Le, prm.Ra_T, prm.R_rho, prm.dx, prm.dy, prm.dt, prm.Tfinal, (double)animation_on};
+    double datasets[] = {(double)prm.NX, (double)prm.NY, prm.L, prm.H, prm.Pr, prm.Le, prm.Ra_T, prm.R_rho, prm.dx, prm.dy, prm.dt, prm.Tfinal, (double)animation_on, plot_dt};
     for (int i = 0; i < num_datasets; i++) {
       DataSet dataset = file.createDataSet(DATASET_NAMES[i], PredType::NATIVE_DOUBLE, scalar_dataspace);
       dataset.write(&datasets[i], PredType::NATIVE_DOUBLE);

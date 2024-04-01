@@ -74,8 +74,9 @@ double flux_S(double x, Prm prm);
 // @brief Build the Poisson matrix for the pressure Poisson equation poisson(p) = div(u)
 // @param coeffs vector of triplets to store the coefficients of the Possion matrix. Triplets consist of (i, j, value), where i and j are the indices of the matrix and value is the value of the coefficient
 // @param prm parameters of the simulation (dx, dy, dt, etc.)
-void buildPoissonMatrix(vector<Trip>& coeffs, Prm prm);
+void buildPoissonMatrixP(vector<Trip>& coeffs, Prm prm);
 void buildPoissonMatrix_V(vector<Trip>& coeffs, double lambda, double mu, Prm prm);
 void buildPoissonMatrix_UTS(vector<Trip>& coeffs, double lambda, double mu, Prm prm);
 void crankNicholson(double* T, double* adv_T, double* S, double* adv_S, Prm prm);
+double meanFluxV(double* v, Prm prm);
 #endif  // NS_HPP

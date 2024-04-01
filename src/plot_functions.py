@@ -14,19 +14,23 @@ def get_color(plot_var):
     return color
 
 
-def get_title(plot_var):
+def get_title(plot_var, t=None):
+    text = ''
     if plot_var == 'u':
-        return r'$u$'
+        text = r'$u$'
     elif plot_var == 'v':
-        return r'$v$'
+        text = r'$v$'
     elif plot_var == 'uv':
-        return r'$\sqrt{u^2 + v^2}$'
+        text = r'$\sqrt{u^2 + v^2}$'
     elif plot_var == 'T':
-        return 'Temperature'
+        text = 'Temperature'
     elif plot_var == 'S':
-        return 'Salinity'
+        text = 'Salinity'
     elif plot_var == 'p':
-        return 'Pressure'
+        text = 'Pressure'
+    if t is not None:
+        text += f' at t = {t:.2f}'
+    return text
 
 
 def set_nx_ny(data_blocks):

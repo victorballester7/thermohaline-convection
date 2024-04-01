@@ -62,7 +62,7 @@ def animate(folder_path: str, save: bool = False):
 
     # Create plot
     # add quiver plot with u and v with 1/numth of the points
-    num = 8
+    num = 16
     uu, vv, XX, YY = data_blocks_u[0, ::num, ::num], data_blocks_v[0, ::num,
                                                                    ::num], X[::num, ::num], Y[::num, ::num]
     # uuvv = np.sqrt(uu**2 + vv**2)
@@ -126,7 +126,7 @@ folder_results = 'output/results/'
 folder_object = 'config/'
 
 # Read data
-NX, NY, LX, LY, Pr, Le, Ra_T, R_rho, dx, dy, dt, Tfinal, animation_on, plot_var = readSetupFromHDF5(
+NX, NY, LX, LY, Pr, Le, Ra_T, R_rho, dx, dy, dt, Tfinal, animation_on, plot_dt, plot_var = readSetupFromHDF5(
     folder_results + '../setup.h5')
 
 if animation_on == False:
