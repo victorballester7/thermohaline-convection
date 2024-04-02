@@ -4,6 +4,39 @@ import os
 from defaults import *
 
 
+def read_data_file(file_path):
+    """Read data from file. The file is of the form:
+    All are numbers expect the penultimate column which is a string
+    x_00 x_01 ... x_0m
+    x_10 x_11 ... x_1m
+    ...
+    x_n0 x_n1 ... x_nm
+    """
+    # first column stores in R_rho
+    # second column stores in Le
+    # third column stores in state
+    # fourth column stores in times
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    R_rho = []
+    Le = []
+    state = []
+    times = []
+    for line in lines:
+        values = line.split()
+        R_rho.append(float(values[0]))
+        Le.append(float(values[1]))
+        state.append(values[2])
+        times.append(float(values[3]))
+
+    R_rho = np.array(R_rho)
+    Le = np.array(Le)
+    times = np.array(times)
+
+    return R_rho, Le, state, times
+
+
 def get_num_frames(folder_path):
     num_frames = len([f for f in os.listdir(folder_path)
                       if os.path.isfile(os.path.join(folder_path, f))])

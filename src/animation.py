@@ -62,7 +62,7 @@ def animate(folder_path: str, save: bool = False):
 
     # Create plot
     # add quiver plot with u and v with 1/numth of the points
-    num = 16
+    num = 8
     uu, vv, XX, YY = data_blocks_u[0, ::num, ::num], data_blocks_v[0, ::num,
                                                                    ::num], X[::num, ::num], Y[::num, ::num]
     # uuvv = np.sqrt(uu**2 + vv**2)

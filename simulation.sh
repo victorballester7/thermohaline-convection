@@ -3,13 +3,21 @@
 # Define the filename
 filename="config/input.txt"
 
-MultiplyR_rho=10
-MultiplyLe=10
-IterR_rho=6
-IterLe=4
+MultiplyR_rho=4
+MultiplyLe=4
+IterR_rho=9
+IterLe=8
 
 startLe=0.01
 startR_rho=0.01
+
+# MultiplyR_rho=1
+# MultiplyLe=2
+# IterR_rho=1
+# IterLe=10
+
+# startLe=0.01
+# startR_rho=1
 
 editLe(){
     # Extract the value of Le
@@ -44,8 +52,17 @@ resetR_rho(){
     sed -i "s/^R_rho $R_rho$/R_rho $startR_rho/" "$filename"
 }
 
+# ask if the user wants to remove the output folder
+echo "Do you want to remove the output folder? (y/n)"
+read answer
+if [ "$answer" == "y" ]; then
+    rm -rf output/Le_Rrho.txt
+fi
+resetLe
+resetR_rho
 for ((i=1; i<=$IterR_rho; i++)); do
     for ((j=1; j<=$IterLe; j++)); do
+        echo $i/$IterR_rho $j/$IterLe
         ./run.sh 1
         editLe
     done

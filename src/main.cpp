@@ -27,8 +27,9 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
   const string filename_input = "config/input.txt";  // name of the input file to read the parameters
-  const string space = "    ";                       // space to print
-  const uint per = 10;                               // progress percentage interval to print (each count%)
+  const string filename_output_Le_Rrho = "output/Le_Rrho.txt";
+  const string space = "    ";  // space to print
+  const uint per = 10;          // progress percentage interval to print (each count%)
   uint count = per;
   Prm prm;
   bool animation;       // flag to enable or disable the animation
@@ -49,7 +50,9 @@ int main(int argc, char* argv[]) {
   // ------------- File input setup ----------------
   START_TIMER();
   ifstream file_input;
+  ofstream file_output_Le_Rrho;
   file_input.open(filename_input);
+  file_output_Le_Rrho.open(filename_output_Le_Rrho, ios::app);  // append to the file
   string tmp;
   if (file_input.is_open()) {
     file_input >> tmp >> prm.L;
@@ -96,8 +99,6 @@ int main(int argc, char* argv[]) {
     cout << "R_rho:         " << space << prm.R_rho << endl;
     cout << "Plot animation?" << space << (animation ? "yes" : "no") << ((plot_var == "u" || plot_var == "v" || plot_var == "uv") ? " (velocity)" : (plot_var == "T" ? " (temperature)" : (plot_var == "S" ? " (salinity)" : " (pressure)"))) << endl;
     // ------------------------------------------------
-  } else {
-    cout << "Le = " << prm.Le << " R_rho = " << prm.R_rho << endl;
   }
   double t = 0.0, mean = 0;
   double meanFluxV_0 = 0, meanFluxV_1 = 0;
@@ -161,11 +162,11 @@ int main(int argc, char* argv[]) {
       // S_eq(i, j) = prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
       // S(i, j) = S_eq(i, j);
 
-      // T(i, j) = -prm.A_T * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
-      // S(i, j) = -prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
+      T(i, j) = -prm.A_T * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
+      S(i, j) = -prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
 
-      T(i, j) = sin(M_PI * y(j) / prm.H / 2);
-      S(i, j) = sin(M_PI * y(j) / prm.H / 2);
+      // T(i, j) = sin(M_PI * y(j) / prm.H / 2);
+      // S(i, j) = sin(M_PI * y(j) / prm.H / 2);
     }
   }
 
@@ -451,7 +452,7 @@ int main(int argc, char* argv[]) {
     ADD_TIME_TO(total_boundary);
 
     if (meanFluxV_0 * meanFluxV_1 < 0) {
-      cout << "Change (t = " << t << "): " << (meanFluxV_0 < 0 ? "S -> T" : "T -> S") << endl;
+      file_output_Le_Rrho << prm.R_rho << " " << prm.Le << (meanFluxV_0 < 0 ? " ST " : " TS ") << t << endl;
       changed = true;
     }
     meanFluxV_0 = meanFluxV_1;
@@ -490,7 +491,7 @@ int main(int argc, char* argv[]) {
     print("Total time:                             " + space, total_files + total_advection + total_diffusion + total_others + total_build_poisson + total_solve_laplace + total_boundary);
   } else {
     if (!changed) {
-      cout << "No change: " << (meanFluxV_0 < 0 ? "S" : "T") << endl;
+      file_output_Le_Rrho << prm.R_rho << " " << prm.Le << (meanFluxV_0 < 0 ? " S " : " T ") << nan("") << endl;
     }
   }
 
