@@ -131,23 +131,4 @@ void saveDataToHDF5(uint plot_count, double* u, double* v, double* T, double* S,
   }
 }
 
-void write_sol(ofstream& file, double* phi, double t, Prm prm, bool ghost) {
-  file << t << endl;
-  if (ghost) {
-    for (int i = 0; i < prm.NX; i++) {
-      for (int j = 0; j < prm.NY; j++) {
-        file << phi[i * prm.NY + j] << " ";
-      }
-      file << endl;
-    }
-  } else {
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        file << phi[i * prm.NY + j] << " ";
-      }
-      file << endl;
-    }
-  }
-}
-
 #endif  // WRITE_HPP

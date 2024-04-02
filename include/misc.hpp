@@ -40,13 +40,13 @@ typedef struct prm {
   double A_T;     // amplitude of the flow for temperature
   double A_S;     // amplitude of the flow for salinity
   // dimensionless numbers
-  double Pr;        // Prandtl number
-  double Le;        // Lewis number
-  double Ra_T;      // Rayleigh number for temperature
-  double R_rho;     // density stability ratio
-  bool periodic_x;  // periodic boundary conditions in the x direction
-  size_t NXNY;      // total number of points in the domain (including the ghost points)
-  size_t nxny;      // total number of points in the domain (excluding the ghost points)
+  double Pr;      // Prandtl number
+  double Le;      // Lewis number
+  double Ra_T;    // Rayleigh number for temperature
+  double R_rho;   // density stability ratio
+  bool implicit;  // if true, use implicit time stepping if not, use explicit time stepping
+  size_t NXNY;    // total number of points in the domain (including the ghost points)
+  size_t nxny;    // total number of points in the domain (excluding the ghost points)
 } Prm;
 
 #endif  // MISC_HPP

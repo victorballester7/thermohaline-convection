@@ -15,8 +15,6 @@
 using namespace Eigen;
 using namespace std;
 
-#define fullsimulation 1
-
 #define EPS 1e-8
 
 #define START_TIMER() begin = chrono::steady_clock::now()
@@ -44,7 +42,7 @@ int main(int argc, char* argv[]) {
   bool remove_cout = false;
   // if one argument is passed
   if (argc == 2) {
-    remove_cout = true;
+    remove_cout = true;  // we are running the full simulation
   }
 
   // ------------- File input setup ----------------
@@ -67,7 +65,7 @@ int main(int argc, char* argv[]) {
     file_input >> tmp >> prm.R_rho;
     file_input >> tmp >> prm.A_T;
     file_input >> tmp >> prm.A_S;
-    file_input >> tmp >> prm.periodic_x;
+    file_input >> tmp >> prm.implicit;
     file_input >> tmp >> plot_var;
     file_input >> tmp >> plot_dt;
     file_input >> tmp >> animation;
@@ -115,11 +113,7 @@ int main(int argc, char* argv[]) {
   double* adv_v = new double[prm.NXNY];  // advection term of v
   double* p = new double[prm.NXNY];      // pressure
   double* T = new double[prm.NXNY];      // temperature
-  // double* T_eq = new double[prm.NXNY];     // equilibrium temperature
-  // double* Delta_T = new double[prm.NXNY];  // Delta_T
-  double* S = new double[prm.NXNY];  // salinity
-  // double* S_eq = new double[prm.NXNY];     // equilibrium salinity
-  // double* Delta_S = new double[prm.NXNY];  // Delta_S
+  double* S = new double[prm.NXNY];      // salinity
 
   // initialize to 0
   for (int i = 0; i < prm.NXNY; i++) {
@@ -131,42 +125,13 @@ int main(int argc, char* argv[]) {
     adv_v[i] = 0;
     p[i] = 0;
     T[i] = 0;
-    // T_eq[i] = 0;
-    // Delta_T[i] = 0;
     S[i] = 0;
-    // S_eq[i] = 0;
-    // Delta_S[i] = 0;
   }
-  // Set T(x, y) = y * A_T * cos(pi * x / L) * sinh(pi * y / L)
-  // Set S(x, y) = y * A_S * cos(pi * x / L) * sinh(pi * y / L)
   double aux = 2 * M_PI / prm.L;
   for (int i = 0; i < prm.NX; i++) {
     for (int j = 0; j < prm.NY; j++) {
-      // the sinh(pi * y / L) term is a normalization factor for the derivative (it)
-      // T_eq(i, j) = y(j) * prm.A_T * cos(M_PI * x(i) / prm.L) * sinh(M_PI * y(j) / prm.L) / sinh(M_PI * prm.H / prm.L);
-      // T(i, j) = T_eq(i, j);
-      // S_eq(i, j) = y(j) * prm.A_S * cos(M_PI * x(i) / prm.L) * sinh(M_PI * y(j) / prm.L) / sinh(M_PI * prm.H / prm.L);
-      // S(i, j) = S_eq(i, j);
-
-      // U(i, j) = cos(M_PI * x(i) / prm.L) * (cos(M_PI * y(j) / prm.H) - 1);
-
-      // for Rayleigh-Benard convection
-      // T_eq(i, j) = y(j) * prm.A_T / prm.H;
-      // T_eq(i, j) = (prm.H - y(j)) * prm.A_T / prm.H;
-      // T_eq(i, j) = prm.A_T * cos(2 * M_PI * x(i) / prm.L) * sinh(2 * M_PI * y(j) / prm.L);
-      // T(i, j) = T_eq(i, j);
-      // S_eq(i, j) = prm.A_S * cos(2 * M_PI * x(i) / prm.L) * sinh(2 * M_PI * y(j) / prm.L);
-      // S(i, j) = S_eq(i, j);
-      // T_eq(i, j) = prm.A_T * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
-      // T(i, j) = T_eq(i, j);
-      // S_eq(i, j) = prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
-      // S(i, j) = S_eq(i, j);
-
       T(i, j) = -prm.A_T * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
       S(i, j) = -prm.A_S * cos(aux * x(i)) * sinh(aux * y(j)) / sinh(aux * prm.H);
-
-      // T(i, j) = sin(M_PI * y(j) / prm.H / 2);
-      // S(i, j) = sin(M_PI * y(j) / prm.H / 2);
     }
   }
 
@@ -180,8 +145,6 @@ int main(int argc, char* argv[]) {
   // ------------- Build Poission matrix -----------
   START_TIMER();
   vector<Trip> coeffsP, coeffsT, coeffsS, coeffsU, coeffsV;
-  // prm.dx = 1.;
-  // prm.dy = 1;
   double lambdaU, lambdaV, muU, muV;
   double lambdaT, lambdaS, muT, muS;
   lambdaU = prm.dt / (prm.dx * prm.dx) * prm.Pr;
@@ -193,16 +156,14 @@ int main(int argc, char* argv[]) {
   muT = prm.dt / (prm.dy * prm.dy);
   muS = prm.dt / (prm.dy * prm.dy) / prm.Le;
   buildPoissonMatrixP(coeffsP, prm);
-  buildPoissonMatrix_UTS(coeffsU, lambdaU, muU, prm);
-  buildPoissonMatrix_UTS(coeffsT, lambdaT, muT, prm);
-  buildPoissonMatrix_UTS(coeffsS, lambdaS, muS, prm);
-  buildPoissonMatrix_V(coeffsV, lambdaV, muV, prm);
+  buildHeatMatrix_UTS(coeffsU, lambdaU, muU, prm);
+  buildHeatMatrix_UTS(coeffsT, lambdaT, muT, prm);
+  buildHeatMatrix_UTS(coeffsS, lambdaS, muS, prm);
+  buildHeatMatrix_V(coeffsV, lambdaV, muV, prm);
 
   SpMat A(prm.nx * prm.ny, prm.nx * prm.ny);
   VectorXd div(prm.nx * prm.ny);
   A.setFromTriplets(coeffsP.begin(), coeffsP.end());
-  // printf("Matrix built\n");
-  // cout << A << endl;
 
   SimplicialLDLT<SpMat> chol;
   chol.compute(A);  // performs a Cholesky factorization of A. The matrix has to be symmetric and positive definite for this to work as expected
@@ -262,56 +223,57 @@ int main(int argc, char* argv[]) {
 
     // ---------- diffusion term ------------
     START_TIMER();
-    // solve the u heat equation
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        DIV(i - 1, j - 1) = ADV_U(i, j);
+    if (prm.implicit) {
+      // solve the u heat equation
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          DIV(i - 1, j - 1) = ADV_U(i, j);
+        }
       }
-    }
-    p_solved = cholU.solve(div);
-    if (cholU.info() != Success) {
-      cout << "Cholesky solve failed" << endl;
-      return 1;
-    }
-    // convert p_solved back to pointer
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        Ustar(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
+      p_solved = cholU.solve(div);
+      if (cholU.info() != Success) {
+        cout << "Cholesky solve failed" << endl;
+        return 1;
       }
-    }
+      // convert p_solved back to pointer
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          Ustar(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
+        }
+      }
 
-    // solve the v heat equation with external forcing (buoyancy)
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        DIV(i - 1, j - 1) = ADV_V(i, j) + prm.dt * prm.Pr * prm.Ra_T * (T(i, j) - S(i, j) / prm.R_rho);
+      // solve the v heat equation with external forcing (buoyancy)
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          DIV(i - 1, j - 1) = ADV_V(i, j) + prm.dt * prm.Pr * prm.Ra_T * (T(i, j) - S(i, j) / prm.R_rho);
+        }
+      }
+      p_solved = cholV.solve(div);
+      if (cholV.info() != Success) {
+        cout << "Cholesky solve failed" << endl;
+        return 1;
+      }
+      // convert p_solved back to pointer
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          Vstar(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
+        }
+      }
+    } else {
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          lap = (U(i + 1, j) - 2 * U(i, j) + U(i - 1, j)) / (prm.dx * prm.dx) +
+                (U(i, j + 1) - 2 * U(i, j) + U(i, j - 1)) / (prm.dy * prm.dy);
+          rhs_u = ADV_U(i, j) + prm.dt * prm.Pr * lap;
+          lap = (V(i + 1, j) - 2 * V(i, j) + V(i - 1, j)) / (prm.dx * prm.dx) +
+                (V(i, j + 1) - 2 * V(i, j) + V(i, j - 1)) / (prm.dy * prm.dy);
+          buoy = prm.Ra_T * (T(i, j) - S(i, j) / prm.R_rho);
+          rhs_v = ADV_V(i, j) + prm.dt * prm.Pr * (lap + buoy);
+          Ustar(i, j) = rhs_u;
+          Vstar(i, j) = rhs_v;
+        }
       }
     }
-    p_solved = cholV.solve(div);
-    if (cholV.info() != Success) {
-      cout << "Cholesky solve failed" << endl;
-      return 1;
-    }
-    // convert p_solved back to pointer
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        Vstar(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
-      }
-    }
-
-    // for (int i = 1; i < prm.NX - 1; i++) {
-    //   for (int j = 1; j < prm.NY - 1; j++) {
-    //     lap = (U(i + 1, j) - 2 * U(i, j) + U(i - 1, j)) / (prm.dx * prm.dx) +
-    //           (U(i, j + 1) - 2 * U(i, j) + U(i, j - 1)) / (prm.dy * prm.dy);
-    //     rhs_u = ADV_U(i, j) + prm.dt * prm.Pr * lap;
-    //     lap = (V(i + 1, j) - 2 * V(i, j) + V(i - 1, j)) / (prm.dx * prm.dx) +
-    //           (V(i, j + 1) - 2 * V(i, j) + V(i, j - 1)) / (prm.dy * prm.dy);
-    //     buoy = prm.Ra_T * (T(i, j) - S(i, j) / prm.R_rho);
-
-    //     rhs_v = ADV_V(i, j) + prm.dt * prm.Pr * (lap + buoy);
-    //     // Ustar(i, j) = rhs_u;
-    //     Vstar(i, j) = rhs_v;
-    //   }
-    // }
     END_TIMER();
     ADD_TIME_TO(total_diffusion);
     // --------------------------------------
@@ -372,10 +334,9 @@ int main(int argc, char* argv[]) {
     BC_velocity(u, v, prm);
     END_TIMER();
     ADD_TIME_TO(total_others);
-
     // --------------------------------------
 
-    // ---------- temperature Navier-Stokes ------------
+    // ---------- temperature & salinity Navier-Stokes ------------
     // advection term
     START_TIMER();
     Semilag2(u, v, T, adv_u, prm);
@@ -385,62 +346,62 @@ int main(int argc, char* argv[]) {
 
     // diffusion term
     START_TIMER();
-
-    // solve the Temperature heat equation
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        DIV(i - 1, j - 1) = ADV_U(i, j);
-        if (j == prm.NY - 2) {
-          DIV(i - 1, j - 1) += flux_T(x(i), prm) * prm.dt / prm.dy;
+    if (prm.implicit) {  // implicit time stepping
+      // solve the Temperature heat equation
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          DIV(i - 1, j - 1) = ADV_U(i, j);
+          if (j == prm.NY - 2) {
+            DIV(i - 1, j - 1) += flux_T(x(i), prm) * prm.dt / prm.dy;
+          }
         }
       }
-    }
-    p_solved = cholT.solve(div);
-    if (cholT.info() != Success) {
-      cout << "Cholesky solve failed" << endl;
-      return 1;
-    }
-    // convert p_solved back to pointer
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        T(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
+      p_solved = cholT.solve(div);
+      if (cholT.info() != Success) {
+        cout << "Cholesky solve failed" << endl;
+        return 1;
       }
-    }
-
-    // solve the Salinity heat equation
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        DIV(i - 1, j - 1) = ADV_V(i, j);
-        if (j == prm.NY - 2) {
-          DIV(i - 1, j - 1) += flux_S(x(i), prm) * prm.dt / prm.dy / prm.Le;
+      // convert p_solved back to pointer
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          T(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
         }
       }
-    }
-    p_solved = cholS.solve(div);
-    if (cholS.info() != Success) {
-      cout << "Cholesky solve failed" << endl;
-      return 1;
-    }
-    // convert p_solved back to pointer
-    for (int i = 1; i < prm.NX - 1; i++) {
-      for (int j = 1; j < prm.NY - 1; j++) {
-        S(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
-      }
-    }
 
-    // crankNicholson(T, adv_u, S, adv_v, prm);
-    // for (int i = 1; i < prm.NX - 1; i++) {
-    //   for (int j = 1; j < prm.NY - 1; j++) {
-    //     lap = (T(i + 1, j) - 2 * T(i, j) + T(i - 1, j)) / (prm.dx * prm.dx) +
-    //           (T(i, j + 1) - 2 * T(i, j) + T(i, j - 1)) / (prm.dy * prm.dy);
-    //     ADV_U(i, j) += prm.dt * lap;
-    //     lap = (S(i + 1, j) - 2 * S(i, j) + S(i - 1, j)) / (prm.dx * prm.dx) +
-    //           (S(i, j + 1) - 2 * S(i, j) + S(i, j - 1)) / (prm.dy * prm.dy);
-    //     ADV_V(i, j) += prm.dt * lap / prm.Le;
-    //   }
-    // }
-    // memcpy(T, adv_u, prm.NXNY * sizeof(double));
-    // memcpy(S, adv_v, prm.NXNY * sizeof(double));
+      // solve the Salinity heat equation
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          DIV(i - 1, j - 1) = ADV_V(i, j);
+          if (j == prm.NY - 2) {
+            DIV(i - 1, j - 1) += flux_S(x(i), prm) * prm.dt / prm.dy / prm.Le;
+          }
+        }
+      }
+      p_solved = cholS.solve(div);
+      if (cholS.info() != Success) {
+        cout << "Cholesky solve failed" << endl;
+        return 1;
+      }
+      // convert p_solved back to pointer
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          S(i, j) = p_solved((i - 1) * prm.ny + (j - 1));
+        }
+      }
+    } else {  // explicit time stepping
+      for (int i = 1; i < prm.NX - 1; i++) {
+        for (int j = 1; j < prm.NY - 1; j++) {
+          lap = (T(i + 1, j) - 2 * T(i, j) + T(i - 1, j)) / (prm.dx * prm.dx) +
+                (T(i, j + 1) - 2 * T(i, j) + T(i, j - 1)) / (prm.dy * prm.dy);
+          ADV_U(i, j) += prm.dt * lap;
+          lap = (S(i + 1, j) - 2 * S(i, j) + S(i - 1, j)) / (prm.dx * prm.dx) +
+                (S(i, j + 1) - 2 * S(i, j) + S(i, j - 1)) / (prm.dy * prm.dy);
+          ADV_V(i, j) += prm.dt * lap / prm.Le;
+        }
+      }
+      memcpy(T, adv_u, prm.NXNY * sizeof(double));
+      memcpy(S, adv_v, prm.NXNY * sizeof(double));
+    }
     END_TIMER();
     ADD_TIME_TO(total_diffusion);
 
@@ -498,13 +459,13 @@ int main(int argc, char* argv[]) {
   // free memory
   delete[] u;
   delete[] ustar;
+  delete[] adv_u;
   delete[] v;
   delete[] vstar;
+  delete[] adv_v;
   delete[] T;
   delete[] S;
   delete[] p;
-  delete[] adv_u;
-  delete[] adv_v;
 
   return 0;
 }

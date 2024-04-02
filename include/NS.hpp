@@ -6,11 +6,6 @@
 
 #include "misc.hpp"
 
-// auxiliary macros to access the fields
-#define p(jj) (obstacle.InterpolatingPoints[6 * k + (jj)])
-#define m_x (obstacle.MirrorPoints[k].x)
-#define m_y (obstacle.MirrorPoints[k].y)
-
 typedef Eigen::SparseMatrix<double> SpMat;  // declares a column-major sparse matrix type of double
 typedef Eigen::Triplet<double> Trip;        // declares a triplet type of double
 
@@ -75,8 +70,24 @@ double flux_S(double x, Prm prm);
 // @param coeffs vector of triplets to store the coefficients of the Possion matrix. Triplets consist of (i, j, value), where i and j are the indices of the matrix and value is the value of the coefficient
 // @param prm parameters of the simulation (dx, dy, dt, etc.)
 void buildPoissonMatrixP(vector<Trip>& coeffs, Prm prm);
-void buildPoissonMatrix_V(vector<Trip>& coeffs, double lambda, double mu, Prm prm);
-void buildPoissonMatrix_UTS(vector<Trip>& coeffs, double lambda, double mu, Prm prm);
-void crankNicholson(double* T, double* adv_T, double* S, double* adv_S, Prm prm);
+
+// @brief Build the matrix for solving the heat equation for the v-component of the velocity field in the splitting method of the Navier-Stokes equations
+// @param coeffs vector of triplets to store the coefficients of the matrix. Triplets consist of (i, j, value), where i and j are the indices of the matrix and value is the value of the coefficient
+// @param lambda coefficient = k*dt/dx^2, where k is the diffusivity
+// @param mu coefficient = k*dt/dy^2, where k is the diffusivity
+// @param prm parameters of the simulation (dx, dy, dt, etc.)
+void buildHeatMatrix_V(vector<Trip>& coeffs, double lambda, double mu, Prm prm);
+
+// @brief Build the matrix for solving the heat equation for the temperature field, salinity field, and the u-component of the velocity field in the splitting method of the Navier-Stokes equations
+// @param coeffs vector of triplets to store the coefficients of the matrix
+// @param lambda coefficient = k*dt/dx^2, where k is the diffusivity
+// @param mu coefficient = k*dt/dy^2, where k is the diffusivity
+// @param prm parameters of the simulation (dx, dy, dt, etc.)
+void buildHeatMatrix_UTS(vector<Trip>& coeffs, double lambda, double mu, Prm prm);
+
+// @brief Computes the mean flux of the v-component of the velocity field in the middle of the domain. This helps to check which convection is taken place in the domain (salinity or temperature)
+// @param v v-component of the velocity field
+// @param prm parameters of the simulation (dx, dy, dt, etc.)
+// @return mean flux of the v-component of the velocity field in the middle of the domain
 double meanFluxV(double* v, Prm prm);
 #endif  // NS_HPP

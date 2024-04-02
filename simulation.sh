@@ -3,13 +3,13 @@
 # Define the filename
 filename="config/input.txt"
 
-MultiplyR_rho=4
-MultiplyLe=4
-IterR_rho=9
-IterLe=8
+sumR_rho=0.02
+MultiplyLe=10
+IterR_rho=5
+IterLe=5
 
 startLe=0.01
-startR_rho=0.01
+startR_rho=0.96
 
 # MultiplyR_rho=1
 # MultiplyLe=2
@@ -33,7 +33,7 @@ editR_rho(){
     # Extract the value of R_rho
     R_rho=$(grep "^R_rho" "$filename" | awk '{print $2}')
     # Multiply the values by 10 (even in floating point arithmetic)
-    new_R_rho=$(awk "BEGIN {print $R_rho * $MultiplyR_rho}")
+    new_R_rho=$(awk "BEGIN {print $R_rho + $sumR_rho}")
     # Replace the lines with the new values
     sed -i "s/^R_rho $R_rho$/R_rho $new_R_rho/" "$filename"
 }

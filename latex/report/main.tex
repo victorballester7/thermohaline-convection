@@ -157,11 +157,74 @@ This has the advantage to be unconditionally stable, leaving us only with the st
 
 We observe that method is consistent with the original problem only if the derivatives of the pressure are bounded. With our explicit solver we checked that that was actually our case and so it makes sense to use the implicit method to solve the heat equations.
 
+% \begin{figure}[ht]
+%   \centering
+%   \begin{subfigure}{0.45\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{images/pressure_data/la
+%     \caption{Pressure and pressure gradients at time $t=0.1$}
+%   \end{subfigure}
+%   \begin{subfigure}{0.45\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/implicit_stability.png}
+%     \caption{Laplacian of the gradients of the pressure at time $t=0.1$}
+%   \end{subfigure}
+%   \caption{Pressure and pressure derivatives at time $t=0.1$ to check the consistency of the implicit method.}
+%   \label{fig:pressure}
+% \end{figure}
+
 With this approach we can now increase the time step to $\Delta t = 10^{-3}$ and still have a stable method. This is a huge improvement in terms of computational cost as we can extend the simulation time.
 
 \section{Results}
+We carried out two different simulations, one with the explicit method and another with the implicit method. The parameters used in the simulations are $\Pr = 10$, $\Ra = 10$. The other parameters, $\Le$ and $R_{\rho}$, are left free.
 
-\subsection{spanish victor}
+\subsection{Convection phase diagram}
+In this section we aim to study in which cases we have a temperature convection or a salinity convection of the flow. The first one is characterized by the flow moving upwards in the center of the domain (equator) and downwards at the extremities (poles). The second one is characterized by the flow moving upwards at the poles and downwards at the equator. We will study the phase diagram of the convection patterns as a function of the Lewis number and the $R_{\rho}$ parameter.
+
+Since $R_\rho=1$ is the critical value for which the temperature and salinity have the same importance in the density of the fluid, we will focus our in a slight variation of this value. We will consider $R_\rho \in [0.9,1.1]$ and $\Le\in \{0.01, 0.1, 1, 10, 100\}$. \cref{fig:phase_diagram} shows the phase diagram of the convection patterns.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{images/phase_diagram.pdf}
+  \caption{Phase diagram of the convection patterns as a function of the Lewis number and the $R_{\rho}$ parameter. The red dots represent the cases where we have temperature convection; the blue dots represent the cases where we have salinity convection; the green dots represent the cases where initially we have salinity convection but it transitions to temperature convection, and the purple dots represent the cases where initially we have temperature convection but it transitions to salinity convection.}
+  \label{fig:phase_diagram}
+\end{figure}
+
+A first note to clarify is that we did not simulate the cases where $R_\rho=1$ and $\Le=1$, as it does not give any convection since the fields $T$ and $S$ are in that case the same and we start with null velocity fields in the domain.
+
+As we can see in \cref{fig:phase_diagram}, we have a strong preference for salinity convection whenever $R_\rho<1$ and a strong preference for temperature convection whenever $R_\rho>1$. At $R_\rho=1$ we have a transition between the two and depending on the Lewis number we transition from one to the other or viceversa.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/TS_1.pdf}
+  \end{subfigure}\\
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/TS_2.pdf}
+  \end{subfigure}\\
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/TS_3.pdf}
+  \end{subfigure}\\
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/TS_4.pdf}
+  \end{subfigure}\\
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/TS_5.pdf}
+  \end{subfigure}\\
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/TS_6.pdf}
+  \end{subfigure}\\
+  \caption{Transition from a temperature convection to a salinity convection. The parameters used in this simulation are $\Pr = 10$, $\Ra = 10$, $\Le = 100$ and $R_{\rho} = 1$ and the spacing in the spatial grid is $\Delta x = \Delta y = 0.01$ and the time step is $\Delta t = 10^{-3}$.}
+  \label{fig:changeTS}
+\end{figure}
+
+In \cref{fig:changeTS}, we can see the transition from a temperature convection to a salinity convection. The parameters used in this simulation are $\Pr = 10$, $\Ra = 10$, $\Le = 100$ and $R_{\rho} = 1$, together with $\Delta x = \Delta y = 0.01$ and $\Delta t = 10^{-3}$.
 
 \subsection{french victor}
 
