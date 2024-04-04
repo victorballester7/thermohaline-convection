@@ -19,7 +19,7 @@ Université Paris-Dauphine, PSL\endgraf
 \maketitle
 
 \section{Introduction}
-The thermohaline circulation is a global circulation of the ocean that is driven by the density differences due to temperature and salinity. It is a key component of the Earth's climate system and plays a crucial role in the heat transport from the equator to the poles. The circulation is driven by the sinking of cold and salty water in the North Atlantic and the upwelling of warm and less salty water in the Southern Ocean. The thermohaline circulation is a complex and nonlinear system that is influenced by a variety of factors, including temperature, salinity, wind, and ocean currents. In this project, we aim to study the thermohaline circulation using a simplified mathematical model based on the Navier-Stokes equations and the advection-diffusion equations for temperature and salinity. We will investigate the stability and bifurcation of the circulation patterns as a function of the Rayleigh number, the Prandtl number, and the Lewis number.
+Thermohaline circulation is a global circulation of the ocean that is driven by the density differences due to temperature and salinity. It is a key component of the Earth's climate system and plays a crucial role in the heat transport from the equator to the poles. The circulation is driven by the sinking of cold and salty water in the northern ocean and the upwelling of warm and less salty water in the southern ocean. The thermohaline circulation is a complex and nonlinear system that is influenced by a variety of factors, including temperature, salinity, wind, and ocean currents. In this project, we aim to study the thermohaline circulation using a simplified mathematical model based on the Navier-Stokes equations and the advection-diffusion equations for temperature and salinity. We will investigate the stability and bifurcation of the circulation patterns as a function of the Rayleigh number, the Prandtl number, and the Lewis number.
 
 \section{Theoretical model}
 \subsection{Governing equations}
@@ -32,13 +32,13 @@ To model the thermohaline convection we implement the Navier-Stokes equations wi
     \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S                                   & = \kappa_S \nabla^2S                                      \\
   \end{aligned}
 \end{equation}
-These equations can be simplified by introducing the Boussinesq approximation, which assumes that the density variations are small. Moreover, after performing a Taylor expansion of the density of the water around some equilibrium value $\rho_0$ yet to be defined, and assuming that it depends only on the temperature and the salinity we get:
+These equations can be simplified by introducing the Boussinesq approximation, which assumes that the density variations are small. Moreover, after performing a Taylor expansion of the density of the water around some equilibrium value $\rho_0$ (yet to be defined), and assuming that it depends only on the temperature and the salinity we get:
 \begin{equation}
   \rho = \rho_0(1-\alpha_T\Delta T + \alpha_S\Delta S)
 \end{equation}
-with $\alpha_T:= -\frac{1}{\rho_0}\frac{\partial\rho}{\partial T}$ and $\alpha_S:= \frac{1}{\rho_0}\frac{\partial\rho}{\partial S}$ are the thermal and saline expansion coefficients respectively. From here on, the notation $\Delta A$ will always denote a variation of the quantity $A$, while the laplacian of $A$ will be expressed as $\nabla^2A$. It is a known fact that these two values, $\alpha_T$ and $\alpha_S$ are positive for water. This implies that whenever the temperature increases, the water density decreases and contrarily whenever the salinity increases, so does the water density. So if we interpret the $\rho\mathbf{g}$ term as a forcing term (which is not really the case since the velocity is involved into their evolution equations through the transport term) we already see that the effect related to the two will be opposite.
+where $\alpha_T:= -\frac{1}{\rho_0}\frac{\partial\rho}{\partial T}$ and $\alpha_S:= \frac{1}{\rho_0}\frac{\partial\rho}{\partial S}$ are the thermal and saline expansion coefficients respectively. From here on, the notation $\Delta A$ will always denote a variation of the quantity $A$, while the laplacian of $A$ will be expressed as $\nabla^2A$. It is a known fact that these two values, $\alpha_T$ and $\alpha_S$, are positive for water. This implies that whenever the temperature increases, the water density decreases and, contrarily, whenever the salinity increases, so does the water density. So if we interpret the $\rho\mathbf{g}$ term as a forcing term we already see that the effect related to the two will be opposite.
 
-Now introducing the $\rho_0\mathbf{g}=-\rho_0g\vf{e}_z$ into the pressure gradient and writing all equations at zero order in density except the buoyancy part (Boussinesq approximation), one gets:
+Now introducing the coefficient $\rho_0\mathbf{g}=-\rho_0g\vf{e}_z$ into the pressure gradient and writing all equations at zero order in density except the buoyancy part (Boussinesq approximation), one gets:
 \begin{equation}\label{eq:boussinesq}
   \begin{aligned}
     \frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u} & = -\nabla p+ \nu\nabla^2\mathbf{u} + (\alpha_T\Delta T - \alpha_S\Delta S)g\vf{e}_z \\
@@ -50,14 +50,14 @@ Now introducing the $\rho_0\mathbf{g}=-\rho_0g\vf{e}_z$ into the pressure gradie
 for some appropriate $p$.
 
 \subsection{Boundary conditions}\label{sec:boundary_conditions}
-We will consider a two-dimensional rectangular domain $(x,z) \in [0,L]\times[0,h]$ with the top boundary representing the interface between the ocean and the atmosphere and the bottom boundary representing the ocean floor. We will impose the following boundary conditions:
+In the following we consider a two-dimensional rectangular domain $(x,z) \in [0,L]\times[0,h]$ with the top boundary representing the interface between the ocean and the atmosphere and the bottom boundary representing the ocean floor. We also impose the following boundary conditions:
 \begin{itemize}
   \item On the two sides $x = 0$ and $x = L$ we consider Neumann boundary conditions for every quantity.
   \item At the bottom of the ocean $z = 0$ we impose a constant temperature and salinity and no slip condition for the velocity field.
   \item At the surface $z = h$ we impose free slip condition for the velocity field and a flux of temperature and salinity.
 \end{itemize}
 
-Our aim was to understand the convection in the ocean from one pole to the other, passing through the equator. Thus, $x=0$ and $x=L$ represent the poles and $x=L/2$ represents the equator.
+Our aim is to understand the convection in the ocean from one pole to the other, passing through the equator. Thus, $x=0$ and $x=L$ represent the poles and $x=L/2$ represents the equator.
 In order to correctly define the fluxes of temperature and salinity, we want to impose that the ocean loses heat at the poles and absorbs heat at the equator and that the salinity decreases (because of the melting of ice) at the poles and increases at the equator (because of the evaporation of water). In the end, taking into account all these boundary conditions we consider the following Neumann conditions:
 \begin{equation}
   \begin{aligned}
@@ -68,9 +68,9 @@ In order to correctly define the fluxes of temperature and salinity, we want to 
 
 
 \subsection{Dimensionless equations}
-In order to simplify the equations and make them easier to work with, we introduce dimensionless variables. Introducing a characteristic length $h$ (the depth of the ocean), a characteristic velocity $U$, which we impose it to be such that the advection term is of the same order as the viscous term for the temperature, we get a value $U=\frac{\kappa_T}{h}$. This leads to a characteristic time $\tau = \frac{h^2}{\kappa_T}$.
+In order to simplify the equations and make them easier to work with, we introduce dimensionless variables. Introducing a characteristic length $h$ (the depth of the ocean), a characteristic velocity $U$, which we impose to be such that the advection term is of the same order as the viscous term for the temperature, we get a value $U=\frac{\kappa_T}{h}$. This leads to a characteristic time $\tau = \frac{h^2}{\kappa_T}$.
 
-We stress out from now that the Taylor expansion in the Boussinesq approximation in \cref{eq:boussinesq} are performed near an equilibrium value $\rho_0$. So an issue to be addressed is how to define the temperature and salinity at this equilibrium value. A first attempt to define these quantities was given using the profile obtained when solving $\nabla^2T = 0$ and $\nabla^2S=0$ with the appropriate boundary conditions, which we called the conduction temperature (the stationary profile that is obtained when removing the advection term). But the results were completely opposite to what we were expecting, and we therefore decided to drop this idea to finally just take as equilibrium value the one at the bottom.
+We stress out from now that the Taylor expansion in the Boussinesq approximation in \cref{eq:boussinesq} are performed near an equilibrium value $\rho_0$. So an issue to be addressed is how to define the temperature and salinity at this equilibrium value. A first attempt to define these quantities was given using the profile obtained when solving $\nabla^2T = 0$ and $\nabla^2S=0$ with the appropriate boundary conditions, which are the stationary profiles that are obtained when removing the advection term. But the results were completely opposite to what we were expecting, and therefore we decided to drop this idea to finally just take as equilibrium value the one at the bottom.
 
 Following in the same line of thought, we introduce the following dimensionless variables for the temperature and salinity as $\tilde{T} = \frac{\Delta T}{T_0}$ and $\tilde{S} = \frac{\Delta S}{S_0}$. Thus, after dropping the tildes, the dimensionless equations become:
 
@@ -95,9 +95,9 @@ Introducing the Prandtl number $\Pr = \frac{\nu}{\kappa_T}$, the Rayleigh number
 
 The first thing to notice is that both the temperature and the salinity are important in these equations up to a constant so that we can choose to have the boundary conditions $T|_{z=0} = 0$ and $S|_{z=0} = 0$.
 
-The Prandtl number $\Pr$ is the viscosity of the Navier-Stokes equation, which we choose to keep constant in our simulations. The Rayleigh number $\Ra$ can be seen as the amplitude of the forcing term in the Navier-Stokes equation. It is a measure of the strength of the buoyancy force relative to the viscous force. The dimensionless parameter $R_\rho$ attempts to quantify the relative importance of temperature and salinity in the density of the fluid. Finally, the Lewis number $\Le$ concerns about the ratio between the thermal and saline diffusivities.
+The Prandtl number $\Pr$ is the viscosity of the Navier-Stokes equation, which we choose to keep constant in our simulations. The Rayleigh number $\Ra$ can be seen as the amplitude of the forcing term in the Navier-Stokes equation. It is a measure of the strength of the buoyancy force relative to the viscous force. The dimensionless parameter $R_\rho$ attempts to quantify the relative importance of temperature and salinity in the density of the fluid. Finally, the Lewis number $\Le$ concerns about how much easier it is for the temperature to diffuse than the salinity.
 
-The initial conditions for our problem are taken to be zero velocity and pressure fields and a temperature and salinity field that solve the Poisson equation $\nabla^2T = 0$ and $\nabla^2S = 0$ with the boundary conditions that match the ones imposed above for these quantities. This aims to have a stable initial state (quasi stationary for those two fields) which will make the Boussinesq approximation valid. In our case, we took as solutions of these two equations:
+The initial conditions for our problem are taken to be zero velocity and pressure fields and a temperature and salinity field that solve the Poisson equation $\nabla^2T = 0$ and $\nabla^2S = 0$ with the boundary conditions that match the ones imposed above for these quantities. This aims to have a stable initial state (quasi stationary for these two fields) which will make the Boussinesq approximation valid. In our case, we took as solutions of these two equations:
 \begin{equation}
   \begin{aligned}
     T_\mathrm{initial}(x,z) & = -A_T \cos\left(\frac{2\pi x}{L}\right) \sinh\left(\frac{2\pi z}{L}\right) \\
@@ -108,13 +108,13 @@ where $A_T$ and $A_S$ are some normalization constants that match the boundary c
 
 \section{Numerical method}
 
-In this section we discuss our numerical solver to integrate \cref{eq:ns} together with the boundary conditions presented in \cref{sec:boundary_conditions}. To simplify the equations, we use \textit{Chorin's projection method}. The idea of the method is to first predict the velocities for the next time step by solving the advection and the diffusion term. With the intermediate velocity field we solve the Poisson equation with a finite difference method (described below). Finally, the \textit{projection step} is preformed, and the velocity field is updated with the new pressure field.
+In this section we discuss our numerical solver to integrate \cref{eq:ns} together with the boundary conditions presented in \cref{sec:boundary_conditions}. To integrate the Navier-Stokes equations for the velocity we use \textit{Chorin's projection method}. The idea of the method is to first predict the velocities for the next time step by solving the advection and the diffusion term. With the intermediate velocity field we solve the Poisson equation with a finite difference method. Finally, the \textit{projection step} is preformed, and the velocity field is updated with the new pressure field.
 
-This method is based on the Helmholtz-Hodge decomposition of a vector field $\vf{F}$, which states that any vector field can be decomposed into a sum of a solenoidal (divergence-free) and an irrotational (curl-free) part. In our case, this means that the velocity field $\vf{u}^*$ can be decomposed into a sum of a solenoidal part $\vf{u}^{n+1}$ and an irrotational part $\nabla p^{n+1}$, where $p^{n+1}$ is the pressure field at time $t^{n+1}$. The projection step is then used to enforce the incompressibility of the velocity field, and to update the velocity field with the new pressure field.
+This method is based on the Helmholtz-Hodge decomposition of a vector field $\vf{F}$, which states that any vector field can be decomposed into a sum of a solenoidal (divergence-free) and an irrotational (curl-free) part. In our case, this means that the velocity field $\vf{u}^*$ can be decomposed into a sum of a solenoidal part $\vf{u}^{n+1}$ and an irrotational part $\Delta t \nabla p^{n+1}$, where $p^{n+1}$ is the pressure field at time $t^{n+1}$. The projection step is then used to enforce the incompressibility of the velocity field, and to update the velocity field with the new pressure field.
 
 To ensure that the boundary conditions are met, we impose the conditions for the velocity right before solving the Poisson equation and at the end of each iteration. The boundary conditions for the pressure are imposed after solving the Poisson equation and before correcting the velocities in the projection step.
 
-After completing the Chorin's projection method, with the new velocity field, we can update the temperature and salinity fields using a semi-Lagrangian method for the advection term and a central differences scheme for the diffusion term.
+After completing the Chorin's projection method, with the new velocity field, we can update the temperature and salinity fields using a semi-Lagrangian method for the advection term and a central difference scheme for the diffusion term.
 
 Next, we provide a summary of the steps in our method. Assuming we know the velocity field at time $t^n$, $\vf{u}^n$, we want to compute the velocity field at time $t^{n+1}$, $\vf{u}^{n+1}$.
 \begin{enumerate}
@@ -131,15 +131,15 @@ Next, we provide a summary of the steps in our method. Assuming we know the velo
 \end{enumerate}
 From these equations, one can easily check that we have:
 \begin{align*}
-  \frac{\vf{u}^{n+1}-\vf{u}^n}{\Delta t} + \vf{u}^n \cdot \nabla \vf{u}^n - \Pr \nabla^2 \vf{u}^n + \nabla p^{n+1} & = 0 \\
+  \frac{\vf{u}^{n+1}-\vf{u}^n}{\Delta t} + \vf{u}^n \cdot \nabla \vf{u}^n - \Pr \nabla^2 \vf{u}^n + \nabla p^{n+1} & = \Pr\Ra\left(T^n - \frac{1}{R_{\rho}}S^n\right)\vf{e}_z \\
   \nabla \cdot \vf{u}^{n+1}                                                                                        & = 0 \\
   \frac{T^{n+1}-T^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla T^{n} - \nabla^2 T^{n}                                & = 0 \\
   \frac{S^{n+1}-S^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla S^{n} - \frac{1}{\Le}\nabla^2 S^{n}                   & = 0
 \end{align*}
 
-Recall that when solving the heat equations in steps 2 and 9 we must impose the stability condition $\kappa \Delta t\left( \frac{1}{{\Delta x}^2} + \frac{1}{{\Delta y}^2}\right) \leq \frac{1}{2}$, where $\kappa$ is the diffusive coefficient in each case. For us, $\kappa \in \{\Pr, 1, 1/\Le\}$ and thus can be quite high as $\Pr\sim 10$ for salt water. This means, assuming an homogeneous grid, that the time step must be less than or equal to $2.5\times 10^{-6}$ for a $\Delta x = \Delta y = 0.01$.
+Recall that when solving the heat equations in steps 2 and 9 we must impose the stability condition $\kappa \Delta t\left( \frac{1}{{\Delta x}^2} + \frac{1}{{\Delta y}^2}\right) \leq \frac{1}{2}$, where $\kappa$ is the diffusive coefficient in each case. For us, $\kappa \in \{\Pr, 1, 1/\Le\}$ and thus it can be quite high as $\Pr\sim 10$ for salt water. This means, assuming an homogeneous grid, that the time step must be less than or equal to $2.5\times 10^{-6}$ for $\Delta x = \Delta y = 0.01$.
 
-A first attempt to solve this high computational cost is to use an implicit method to solve the heat equation. That is, to transform steps 2.\ and 9.\ into:
+A first attempt to solve this problem is to use an implicit method to solve the heat equation. That is, to transform steps 2\ and 9\ into:
 \begin{enumerate}
   \setcounter{enumi}{1}
   \item Solve for $\vf{u}^*$ in $\displaystyle  \frac{\vf{u}^* - \vf{u}^a}{\Delta t} = \Pr \nabla^2 \vf{u}^* +\Pr\Ra\left(T^n - \frac{1}{R_{\rho}}S^n\right)\vf{e}_z$ using a central differences scheme.
@@ -149,31 +149,37 @@ A first attempt to solve this high computational cost is to use an implicit meth
 
 This has the advantage to be unconditionally stable, leaving us only with the stability condition for the advection term. However, if we sum all the equations, we observe that we are actually solving:
 \begin{align*}
-  \frac{\vf{u}^{n+1}-\vf{u}^n}{\Delta t} + \vf{u}^n \cdot \nabla \vf{u}^n - \Pr \nabla^2 \vf{u}^{n+1} + \nabla p^{n+1} & = \Delta t \Pr \nabla^2(\nabla p^{n+1}) \\
+  \frac{\vf{u}^{n+1}-\vf{u}^n}{\Delta t} + \vf{u}^n \cdot \nabla \vf{u}^n - \Pr \nabla^2 \vf{u}^{n+1} + \nabla p^{n+1} & = \Pr\Ra\left(T^n - \frac{1}{R_{\rho}}S^n\right)\vf{e}_z+\Delta t \Pr \nabla^2(\nabla p^{n+1}) \\
   \nabla \cdot \vf{u}^{n+1}                                                                                            & = 0                                     \\
   \frac{T^{n+1}-T^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla T^{n} - \nabla^2 T^{n+1}                                  & = 0                                     \\
   \frac{S^{n+1}-S^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla S^{n} - \frac{1}{\Le}\nabla^2 S^{n+1}                     & = 0
 \end{align*}
 
-We observe that method is consistent with the original problem only if the derivatives of the pressure are bounded. With our explicit solver we checked that that was actually our case and so it makes sense to use the implicit method to solve the heat equations.
+We observe that method is consistent with the original problem only if the derivatives of the pressure are bounded. With our explicit solver we checked that that was actually our case (see \cref{fig:pressure}) and so it makes sense to use the implicit method to solve the heat equations. 
 
-% \begin{figure}[ht]
-%   \centering
-%   \begin{subfigure}{0.45\textwidth}
-%     \centering
-%     \includegraphics[width=\textwidth]{images/pressure_data/la
-%     \caption{Pressure and pressure gradients at time $t=0.1$}
-%   \end{subfigure}
-%   \begin{subfigure}{0.45\textwidth}
-%     \centering
-%     \includegraphics[width=\textwidth]{figures/implicit_stability.png}
-%     \caption{Laplacian of the gradients of the pressure at time $t=0.1$}
-%   \end{subfigure}
-%   \caption{Pressure and pressure derivatives at time $t=0.1$ to check the consistency of the implicit method.}
-%   \label{fig:pressure}
-% \end{figure}
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pressure_data/pressure_pressuregradient.png}
+    \caption{Pressure and pressure gradients at time $t=0.1$}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pressure_data/laplacien_gradient_x.png}
+    \caption{Laplacian of the $x$ component of the gradient of the pressure at time $t=0.1$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pressure_data/laplacian_gradient_y.png}
+    \caption{Laplacian of the $y$ component of the gradient of the pressure at time $t=0.1$}
+  \end{subfigure}
+  \caption{Pressure and pressure derivatives at time $t=0.1$ to check the consistency of the implicit method.}
+  \label{fig:pressure}
+\end{figure}
 
-With this approach we can now increase the time step to $\Delta t = 10^{-3}$ and still have a stable method. This is a huge improvement in terms of computational cost as we can extend the simulation time.
+With this approach, we can now increase the time step to $\Delta t = 10^{-3}$ and still have a stable method. This is a huge improvement in terms of computational cost as we can extend the simulation time.
 
 \section{Results}
 We carried out two different simulations, one with the explicit method and another with the implicit method. The parameters used in the simulations are $\Pr = 10$, $\Ra = 10$. The other parameters, $\Le$ and $R_{\rho}$, are left free.
@@ -181,52 +187,96 @@ We carried out two different simulations, one with the explicit method and anoth
 \subsection{Convection phase diagram}
 In this section we aim to study in which cases we have a temperature convection or a salinity convection of the flow. The first one is characterized by the flow moving upwards in the center of the domain (equator) and downwards at the extremities (poles). The second one is characterized by the flow moving upwards at the poles and downwards at the equator. We will study the phase diagram of the convection patterns as a function of the Lewis number and the $R_{\rho}$ parameter.
 
-Since $R_\rho=1$ is the critical value for which the temperature and salinity have the same importance in the density of the fluid, we will focus our in a slight variation of this value. We will consider $R_\rho \in [0.9,1.1]$ and $\Le\in \{0.01, 0.1, 1, 10, 100\}$. \cref{fig:phase_diagram} shows the phase diagram of the convection patterns.
+Since $R_\rho=1$ is the critical value for which the temperature and salinity have the same importance in the density of the fluid, we focus on values that are close to this criticality. We will consider $R_\rho \in [0.9,1.1]$ and $\Le\in \{0.01, 0.1, 1, 10, 100\}$. \cref{fig:phase_diagram} shows the phase diagram of the convection patterns.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/phase_diagram.pdf}
-  \caption{Phase diagram of the convection patterns as a function of the Lewis number and the $R_{\rho}$ parameter. The red dots represent the cases where we have temperature convection; the blue dots represent the cases where we have salinity convection; the green dots represent the cases where initially we have salinity convection but it transitions to temperature convection, and the purple dots represent the cases where initially we have temperature convection but it transitions to salinity convection.}
+  \includegraphics[width=0.75\textwidth]{images/phase_diagram.pdf}
+  \caption{Phase diagram of the convection patterns as a function of the Lewis number and the $R_{\rho}$ parameter. The red dots represent the cases where we have temperature convection; the blue dots represent the cases where we have salinity convection; the green dots represent the cases where initially we have salinity convection but eventually it transitions to temperature convection, and the purple dots represent the cases where initially we have temperature convection but eventually it transitions to salinity convection.}
   \label{fig:phase_diagram}
 \end{figure}
 
-A first note to clarify is that we did not simulate the cases where $R_\rho=1$ and $\Le=1$, as it does not give any convection since the fields $T$ and $S$ are in that case the same and we start with null velocity fields in the domain.
+A first note to clarify is that in this section we did not simulate the case where $R_\rho=1$ and $\Le=1$, as any convection we could get from an initial null velocity field could only come from computational noise since the fields $T$ and $S$ are in that case the same. 
 
 As we can see in \cref{fig:phase_diagram}, we have a strong preference for salinity convection whenever $R_\rho<1$ and a strong preference for temperature convection whenever $R_\rho>1$. At $R_\rho=1$ we have a transition between the two and depending on the Lewis number we transition from one to the other or viceversa.
-
 \begin{figure}[ht]
   \centering
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{images/TS_1.pdf}
+    \includegraphics[width=0.75\textwidth]{images/TS_1.pdf}
   \end{subfigure}\\
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{images/TS_2.pdf}
+    \includegraphics[width=0.75\textwidth]{images/TS_2.pdf}
   \end{subfigure}\\
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{images/TS_3.pdf}
+    \includegraphics[width=0.75\textwidth]{images/TS_3.pdf}
   \end{subfigure}\\
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{images/TS_4.pdf}
+    \includegraphics[width=0.75\textwidth]{images/TS_4.pdf}
   \end{subfigure}\\
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{images/TS_5.pdf}
+    \includegraphics[width=0.75\textwidth]{images/TS_5.pdf}
   \end{subfigure}\\
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{images/TS_6.pdf}
+    \includegraphics[width=0.75\textwidth]{images/TS_6.pdf}
   \end{subfigure}\\
   \caption{Transition from a temperature convection to a salinity convection. The parameters used in this simulation are $\Pr = 10$, $\Ra = 10$, $\Le = 100$ and $R_{\rho} = 1$ and the spacing in the spatial grid is $\Delta x = \Delta y = 0.01$ and the time step is $\Delta t = 10^{-3}$.}
   \label{fig:changeTS}
 \end{figure}
 
-In \cref{fig:changeTS}, we can see the transition from a temperature convection to a salinity convection. The parameters used in this simulation are $\Pr = 10$, $\Ra = 10$, $\Le = 100$ and $R_{\rho} = 1$, together with $\Delta x = \Delta y = 0.01$ and $\Delta t = 10^{-3}$.
+In \cref{fig:changeTS}, we can see the transition from a temperature convection to a salinity convection. The parameters used in this simulation (ran implicitly) are $\Pr = 10$, $\Ra = 10$, $\Le = 100$ and $R_{\rho} = 1$, together with $\Delta x = \Delta y = 0.01$ and $\Delta t = 10^{-3}$.
 
-\subsection{french victor}
+\subsection{Impact of the initial conditions on the stationary state}
+
+This section aims at exploring the way initial conditions can change the final state that is reached by the system. 
+\par
+In the previous subsection, the initial velocity field was taken zero everywhere and all driven by the forced convection whereas here the initial velocity field will be non-zero. The idea is, when the simulation time allows it, to simulate a system, say $(R_{\rho},Le) = (5,100)$, to wait until the system has reached a stationary state and then to use the temperature, salinity and velocity fields obtained as initial conditions for another system, say for instance $(R_{\rho},Le) = (1,0.1)$. 
+\par
+The method used to study the time-evolution of the system and determine whether it has reached a stationary state or not is as follows : we measure the mean vertical velocity at the center of the system through a line of length defined in the beginning which was taken in all simulations to be equal to $\frac{L}{8}$ centered in both x and y directions. The advantage of this method is also that plotting its evolution as a function of time allows us to determine when exactly there is a transition between cells characterized by temperature convection or salinity convection. An example is given in \cref{fig:flux_analysis}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{images/last_subsection/fig3.png}
+  \caption{Simulation of the system $(R_{\rho},Le) = (1.01,100)$. The positive part means that the cells are driven by the temperature distribution and a transition occurs at the intersection between the blue and orange curves.}
+  \label{fig:flux_analysis}
+\end{figure}
+\par
+We expect to get interesting results at values of $R_{\rho}$ and $L_e$ that imply transitory regimes in which several types of cells are found, so typically for $R_{\rho}$ that is close to $1$ as can be seen from \cref{fig:phase_diagram}.
+\par 
+Keeping this in mind, we first study the transition of systems from $(R_{\rho},Le)$ to the system $(1,Le)$ : we keep $Le$ constant and abruptly change the value of $R_{\rho}$ to $1$. Several tests were performed, all of them at $Le > 1$, namely $Le = 100, 10$ and $1.43$ since we expect the situation $Le < 1$ to be approximately the symmetric.
+\par
+This series of simulations give results in accordance with Figure 2 : the systems $(R_{\rho} = 1.01, Le > 1.4)$ first experience convection cells forced by the temperature profile due to its higher amplitude but with time, since $Le > 1$, the temperature ends up being dissipated more than the salinity so that the system experiences a transition to salinity-driven cells, and the time that is needed is increased as the Lewis number is decreased. This can be seen from Figure 3 as this is exactly the system that is simulated for the example. Apart from this value of $R_{\rho}$ all initializing systems went directly to the system with cells dictated by the value of $R_{\rho}$ by itself : salinity-driven cells when $R_{\rho} < 1$ and conversely.
+\par
+Using these systems as initial conditions to the analogue system for which the only difference is the change from $R_{\rho}$ to $1$ always led to systems with cells driven exclusively by the salinity distribution which can be interpreted as follows : the initial system is taken too closely to a simple system with two convection cells (or too far from a system with more than two convection cells depending on the point of view). In spite of that, it can be seen from Figure 4 that even though the system is mainly driven by the salinity distribution, in some cases during the transient regime it does show some features of thermal convection as can be seen in Figure 5 especially close to the poles which is a sign a system with more than two convection cells can be achieved. In these cases unfortunately the thermal convection cells end up dissipating for the benefit of saline convection cells. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/last_subsection/combination_temperature_temp_R_rho_5_to_1_prs_0_1.png}
+  \caption{Simulation of the system $(R_{\rho},Le) = (1,10)$ with initial condition $(R_{\rho},Le) = (5,10)$. Though the convection is mainly driven by salinity, the poles experience some leftovers of convection due to temperature distribution.}
+  \label{fig:mix_transient}
+\end{figure}
+
+\par
+A second test was performed this time with initial systems $(R_{\rho},Le)$ but with final systems $(1,Le^{\prime})$ with $Le \neq Le^{\prime}$ : the idea is that the two parameters should be varied in opposite ways in the sense that one variation should lead from thermal to saline cells and conversely for the other. The example that was studied was the one with initial condition the system $(R_{\rho},Le) = (0.9,0.25)$ which has simply two cells driven by salinity (not shown). We then plug these initial conditions into the system $(R_{\rho},Le) = (1,100)$ : $R_{\rho}$ is increased which should favor temperature-driven cells and $Le$ is increased which should on the contrary favor salinity-driven cells. Having these two opposite effects at the same time yields a system that is indeed able to sustain four cells of convection, two driven by salinity and two by temperature as shown in \cref{fig:four_cells}. 
+\\
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/last_subsection/four_cells.png}
+  \caption{Simulation of the system $(R_{\rho},Le) = (1,1.1)$ with initial condition $(R_{\rho},Le) = (1,10)$. The cells at the equator are driven by salinity whereas those at the poles are driven by temperature. At this stage the system is stationary.}
+  \label{fig:four_cells}
+\end{figure}
+\\
+Interestingly this system is stable in the sense that its stationary state keeps four convection cells for low variations of $R_{\rho}$ or $Le$. Tests were performed with a change to systems with $R_{\rho}$ being kept equal to $1$ and $Le$ brought to values as small as $0.9$ but also $Le$ kept equal to $10$ and $R_{\rho}$ brought from $1$ to $1.0001$, tests at $R_{\rho} = 1.0005$ destroying completely this structure to get back to the result that is expected from Figure 2. A noticeable thing is that the tests at fixed $Le$ and varying $R_{\rho}$ went through states with even 6 convection cells during its transient regime, before reaching the stationary state but it seems that these states are not stable.
 
 \section{Conclusions}
+To summarize the different findings, the state diagram brought interesting behavior in the region where the fluxes of temperature and salinity at the boundary conditions are close. As soon as $|R_{\rho}-1| > 0.02$, no matter the value of the Lewis number, the system will always display convecting cells in the direction that is dictated by the dominant flux. In the opposite case, if $Le$ is far from $1$, in both directions, the system can display transitions from a state to another during the transient regime due to the dissipation of energy. An interesting idea could be to explore the analogous phase diagram with periodic boundary conditions or a space domain with a different aspect ratio.
+\\
+Moreover a nice result with several pairs of convecting cells was obtained when beginning from an initial state that is a non-zero velocity field. These states that we could call mixed states could be investigated further by for instance varying the parameters $Ra$ and $Pr$ as well.
+\\
+To finish with, the results for $R_{\rho}$ close to $1$ are similar when using an implicit or explicit scheme for the diffusion terms which is a sign that these two schemes are equivalent, at least when the CFL condition does not prevent the explicit scheme from being used.
 \end{document}
