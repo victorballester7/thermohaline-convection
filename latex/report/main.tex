@@ -132,8 +132,8 @@ Next, we provide a summary of the steps in our method. Assuming we know the velo
 From these equations, one can easily check that we have:
 \begin{align*}
   \frac{\vf{u}^{n+1}-\vf{u}^n}{\Delta t} + \vf{u}^n \cdot \nabla \vf{u}^n - \Pr \nabla^2 \vf{u}^n + \nabla p^{n+1} & = \Pr\Ra\left(T^n - \frac{1}{R_{\rho}}S^n\right)\vf{e}_z \\
-  \nabla \cdot \vf{u}^{n+1}                                                                                        & = 0 \\
-  \frac{T^{n+1}-T^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla T^{n} - \nabla^2 T^{n}                                & = 0 \\
+  \nabla \cdot \vf{u}^{n+1}                                                                                        & = 0                                                      \\
+  \frac{T^{n+1}-T^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla T^{n} - \nabla^2 T^{n}                                & = 0                                                      \\
   \frac{S^{n+1}-S^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla S^{n} - \frac{1}{\Le}\nabla^2 S^{n}                   & = 0
 \end{align*}
 
@@ -150,12 +150,12 @@ A first attempt to solve this problem is to use an implicit method to solve the 
 This has the advantage to be unconditionally stable, leaving us only with the stability condition for the advection term. However, if we sum all the equations, we observe that we are actually solving:
 \begin{align*}
   \frac{\vf{u}^{n+1}-\vf{u}^n}{\Delta t} + \vf{u}^n \cdot \nabla \vf{u}^n - \Pr \nabla^2 \vf{u}^{n+1} + \nabla p^{n+1} & = \Pr\Ra\left(T^n - \frac{1}{R_{\rho}}S^n\right)\vf{e}_z+\Delta t \Pr \nabla^2(\nabla p^{n+1}) \\
-  \nabla \cdot \vf{u}^{n+1}                                                                                            & = 0                                     \\
-  \frac{T^{n+1}-T^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla T^{n} - \nabla^2 T^{n+1}                                  & = 0                                     \\
+  \nabla \cdot \vf{u}^{n+1}                                                                                            & = 0                                                                                            \\
+  \frac{T^{n+1}-T^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla T^{n} - \nabla^2 T^{n+1}                                  & = 0                                                                                            \\
   \frac{S^{n+1}-S^{n}}{\Delta t} + \vf{u}^{n+1} \cdot \nabla S^{n} - \frac{1}{\Le}\nabla^2 S^{n+1}                     & = 0
 \end{align*}
 
-We observe that method is consistent with the original problem only if the derivatives of the pressure are bounded. With our explicit solver we checked that that was actually our case (see \cref{fig:pressure}) and so it makes sense to use the implicit method to solve the heat equations. 
+We observe that method is consistent with the original problem only if the derivatives of the pressure are bounded. With our explicit solver we checked that that was actually our case (see \cref{fig:pressure}) and so it makes sense to use the implicit method to solve the heat equations.
 
 \begin{figure}[ht]
   \centering
@@ -196,7 +196,7 @@ Since $R_\rho=1$ is the critical value for which the temperature and salinity ha
   \label{fig:phase_diagram}
 \end{figure}
 
-A first note to clarify is that in this section we did not simulate the case where $R_\rho=1$ and $\Le=1$, as any convection we could get from an initial null velocity field could only come from computational noise since the fields $T$ and $S$ are in that case the same. 
+A first note to clarify is that in this section we did not simulate the case where $R_\rho=1$ and $\Le=1$, as any convection we could get from an initial null velocity field could only come from computational noise since the fields $T$ and $S$ are in that case the same.
 
 As we can see in \cref{fig:phase_diagram}, we have a strong preference for salinity convection whenever $R_\rho<1$ and a strong preference for temperature convection whenever $R_\rho>1$. At $R_\rho=1$ we have a transition between the two and depending on the Lewis number we transition from one to the other or viceversa.
 \begin{figure}[ht]
@@ -233,9 +233,9 @@ In \cref{fig:changeTS}, we can see the transition from a temperature convection 
 
 \subsection{Impact of the initial conditions on the stationary state}
 
-This section aims at exploring the way initial conditions can change the final state that is reached by the system. 
+This section aims at exploring the way initial conditions can change the final state that is reached by the system.
 \par
-In the previous subsection, the initial velocity field was taken zero everywhere and all driven by the forced convection whereas here the initial velocity field will be non-zero. The idea is, when the simulation time allows it, to simulate a system, say $(R_{\rho},Le) = (5,100)$, to wait until the system has reached a stationary state and then to use the temperature, salinity and velocity fields obtained as initial conditions for another system, say for instance $(R_{\rho},Le) = (1,0.1)$. 
+In the previous subsection, the initial velocity field was taken zero everywhere and all driven by the forced convection whereas here the initial velocity field will be non-zero. The idea is, when the simulation time allows it, to simulate a system, say $(R_{\rho},Le) = (5,100)$, to wait until the system has reached a stationary state and then to use the temperature, salinity and velocity fields obtained as initial conditions for another system, say for instance $(R_{\rho},Le) = (1,0.1)$.
 \par
 The method used to study the time-evolution of the system and determine whether it has reached a stationary state or not is as follows : we measure the mean vertical velocity at the center of the system through a line of length defined in the beginning which was taken in all simulations to be equal to $\frac{L}{8}$ centered in both x and y directions. The advantage of this method is also that plotting its evolution as a function of time allows us to determine when exactly there is a transition between cells characterized by temperature convection or salinity convection. An example is given in \cref{fig:flux_analysis}.
 
@@ -247,12 +247,12 @@ The method used to study the time-evolution of the system and determine whether 
 \end{figure}
 \par
 We expect to get interesting results at values of $R_{\rho}$ and $L_e$ that imply transitory regimes in which several types of cells are found, so typically for $R_{\rho}$ that is close to $1$ as can be seen from \cref{fig:phase_diagram}.
-\par 
+\par
 Keeping this in mind, we first study the transition of systems from $(R_{\rho},Le)$ to the system $(1,Le)$ : we keep $Le$ constant and abruptly change the value of $R_{\rho}$ to $1$. Several tests were performed, all of them at $Le > 1$, namely $Le = 100, 10$ and $1.43$ since we expect the situation $Le < 1$ to be approximately the symmetric.
 \par
 This series of simulations give results in accordance with Figure 2 : the systems $(R_{\rho} = 1.01, Le > 1.4)$ first experience convection cells forced by the temperature profile due to its higher amplitude but with time, since $Le > 1$, the temperature ends up being dissipated more than the salinity so that the system experiences a transition to salinity-driven cells, and the time that is needed is increased as the Lewis number is decreased. This can be seen from Figure 3 as this is exactly the system that is simulated for the example. Apart from this value of $R_{\rho}$ all initializing systems went directly to the system with cells dictated by the value of $R_{\rho}$ by itself : salinity-driven cells when $R_{\rho} < 1$ and conversely.
 \par
-Using these systems as initial conditions to the analogue system for which the only difference is the change from $R_{\rho}$ to $1$ always led to systems with cells driven exclusively by the salinity distribution which can be interpreted as follows : the initial system is taken too closely to a simple system with two convection cells (or too far from a system with more than two convection cells depending on the point of view). In spite of that, it can be seen from Figure 4 that even though the system is mainly driven by the salinity distribution, in some cases during the transient regime it does show some features of thermal convection as can be seen in Figure 5 especially close to the poles which is a sign a system with more than two convection cells can be achieved. In these cases unfortunately the thermal convection cells end up dissipating for the benefit of saline convection cells. 
+Using these systems as initial conditions to the analogue system for which the only difference is the change from $R_{\rho}$ to $1$ always led to systems with cells driven exclusively by the salinity distribution which can be interpreted as follows : the initial system is taken too closely to a simple system with two convection cells (or too far from a system with more than two convection cells depending on the point of view). In spite of that, it can be seen from Figure 4 that even though the system is mainly driven by the salinity distribution, in some cases during the transient regime it does show some features of thermal convection as can be seen in Figure 5 especially close to the poles which is a sign a system with more than two convection cells can be achieved. In these cases unfortunately the thermal convection cells end up dissipating for the benefit of saline convection cells.
 
 \begin{figure}[ht]
   \centering
@@ -262,7 +262,7 @@ Using these systems as initial conditions to the analogue system for which the o
 \end{figure}
 
 \par
-A second test was performed this time with initial systems $(R_{\rho},Le)$ but with final systems $(1,Le^{\prime})$ with $Le \neq Le^{\prime}$ : the idea is that the two parameters should be varied in opposite ways in the sense that one variation should lead from thermal to saline cells and conversely for the other. The example that was studied was the one with initial condition the system $(R_{\rho},Le) = (0.9,0.25)$ which has simply two cells driven by salinity (not shown). We then plug these initial conditions into the system $(R_{\rho},Le) = (1,100)$ : $R_{\rho}$ is increased which should favor temperature-driven cells and $Le$ is increased which should on the contrary favor salinity-driven cells. Having these two opposite effects at the same time yields a system that is indeed able to sustain four cells of convection, two driven by salinity and two by temperature as shown in \cref{fig:four_cells}. 
+A second test was performed this time with initial systems $(R_{\rho},Le)$ but with final systems $(1,Le^{\prime})$ with $Le \neq Le^{\prime}$ : the idea is that the two parameters should be varied in opposite ways in the sense that one variation should lead from thermal to saline cells and conversely for the other. The example that was studied was the one with initial condition the system $(R_{\rho},Le) = (0.9,0.25)$ which has simply two cells driven by salinity (not shown). We then plug these initial conditions into the system $(R_{\rho},Le) = (1,100)$ : $R_{\rho}$ is increased which should favor temperature-driven cells and $Le$ is increased which should on the contrary favor salinity-driven cells. Having these two opposite effects at the same time yields a system that is indeed able to sustain four cells of convection, two driven by salinity and two by temperature as shown in \cref{fig:four_cells}.
 \\
 \begin{figure}[ht]
   \centering

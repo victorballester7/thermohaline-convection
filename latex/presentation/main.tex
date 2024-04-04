@@ -103,75 +103,75 @@ Université Paris-Dauphine, PSL}
 \end{frame}
 
 \section{Theoretical model}
-    
+
 
 \begin{frame}{Governing equations (I)}
-Navier-Stokes equations and diffusion equations for salinity and temperature :
-\begin{equation}
-  \begin{aligned}
-    \rho\left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) & = -\nabla P + \rho\nu\nabla^2\mathbf{u} + \rho \mathbf{g} \\
-    \pdv{\rho}{t} + \nabla\cdot(\rho\mathbf{u})                                                & = 0                                                       \\
-    \frac{\partial T}{\partial t} + (\mathbf{u}\cdot\nabla)T                                   & = \kappa_T \nabla^2T                                      \\
-    \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S                                   & = \kappa_S \nabla^2S                                      \\
-  \end{aligned}
-\end{equation}
-Taylor expansion of density :
-\begin{equation}
-  \rho = \rho_0(1-\alpha_T\Delta T + \alpha_S\Delta S)
-\end{equation}
+  Navier-Stokes equations and diffusion equations for salinity and temperature :
+  \begin{equation}
+    \begin{aligned}
+      \rho\left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) & = -\nabla P + \rho\nu\nabla^2\mathbf{u} + \rho \mathbf{g} \\
+      \pdv{\rho}{t} + \nabla\cdot(\rho\mathbf{u})                                                & = 0                                                       \\
+      \frac{\partial T}{\partial t} + (\mathbf{u}\cdot\nabla)T                                   & = \kappa_T \nabla^2T                                      \\
+      \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S                                   & = \kappa_S \nabla^2S                                      \\
+    \end{aligned}
+  \end{equation}
+  Taylor expansion of density :
+  \begin{equation}
+    \rho = \rho_0(1-\alpha_T\Delta T + \alpha_S\Delta S)
+  \end{equation}
 
 
 \end{frame}
 
 \begin{frame}{Governing equations (II)}
-Navier-Stokes equations :
-\begin{equation}
-  \begin{aligned}
-    \left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) & = -\frac{\nabla P}{\rho _0} + \nu\nabla^2\mathbf{u} + \rho_0\left(\alpha_T \Delta T - \alpha_S \Delta S \right) g\mathbf{e_z} \\
-    \nabla\cdot\mathbf{u}& = 0  \end{aligned}
-\end{equation}
-Diffusion equations :
-\begin{equation}
+  Navier-Stokes equations :
+  \begin{equation}
     \begin{aligned}
-        \frac{\partial T}{\partial t} + (\mathbf{u}\cdot\nabla)T                                   & = \kappa_T \nabla^2T                                      \\
-    \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S                                   & = \kappa_S \nabla^2S                                      \\    
+      \left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) & = -\frac{\nabla P}{\rho _0} + \nu\nabla^2\mathbf{u} + \rho_0\left(\alpha_T \Delta T - \alpha_S \Delta S \right) g\mathbf{e_z} \\
+      \nabla\cdot\mathbf{u}                                                                  & = 0\end{aligned}
+  \end{equation}
+  Diffusion equations :
+  \begin{equation}
+    \begin{aligned}
+      \frac{\partial T}{\partial t} + (\mathbf{u}\cdot\nabla)T & = \kappa_T \nabla^2T \\
+      \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S & = \kappa_S \nabla^2S \\
     \end{aligned}
-\end{equation}
+  \end{equation}
 
 
 \end{frame}
 \begin{frame}{Boundary conditions}
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=1.\textwidth]{images/drawing_setup.jpg}
-  \caption{Drawing of the setup used in all simulations.}
-  \label{fig:setup}
-\end{figure}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.\textwidth]{images/drawing_setup.jpg}
+    \caption{Drawing of the setup used in all simulations.}
+    \label{fig:setup}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Dimensionless equations and control parameters}
-Navier-Stokes equations in the Boussinesq approximation :
-\begin{equation}\label{eq:ns}
-  \begin{aligned}
-    \frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u} & = -\nabla p + \Pr\nabla^2\mathbf{u} + \Pr\Ra\left(T - \frac{1}{R_{\rho}}S\right)\vf{e}_z \\
-    \frac{\partial T}{\partial t} + (\mathbf{u}\cdot\nabla)T                  & = \nabla^2T                                                                              \\
-    \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S                  & = \frac{1}{\Le}\nabla^2S                                                                 \\
-    \nabla\cdot\mathbf{u}                                                     & = 0
-  \end{aligned}
-\end{equation}
-Dimensionless quantities : 
-\begin{equation}
+  Navier-Stokes equations in the Boussinesq approximation :
+  \begin{equation}\label{eq:ns}
+    \begin{aligned}
+      \frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u} & = -\nabla p + \Pr\nabla^2\mathbf{u} + \Pr\Ra\left(T - \frac{1}{R_{\rho}}S\right)\vf{e}_z \\
+      \frac{\partial T}{\partial t} + (\mathbf{u}\cdot\nabla)T                  & = \nabla^2T                                                                              \\
+      \frac{\partial S}{\partial t} + (\mathbf{u}\cdot\nabla)S                  & = \frac{1}{\Le}\nabla^2S                                                                 \\
+      \nabla\cdot\mathbf{u}                                                     & = 0
+    \end{aligned}
+  \end{equation}
+  Dimensionless quantities :
+  \begin{equation}
     \Pr = \frac{\nu}{\kappa_T}
-\end{equation}
-\begin{equation}
+  \end{equation}
+  \begin{equation}
     \Ra = \frac{\alpha_T g T_0 h^3}{\nu \kappa_T}
-\end{equation}
-\begin{equation}
+  \end{equation}
+  \begin{equation}
     R_{\rho} = \frac{\alpha_T T_0}{\alpha_S S_0}
-\end{equation}
-\begin{equation}
+  \end{equation}
+  \begin{equation}
     \Le = \frac{\kappa_T}{\kappa_S}
-\end{equation}
+  \end{equation}
 \end{frame}
 
 \section{Numerical methods}
@@ -278,7 +278,7 @@ Dimensionless quantities :
 \end{frame}
 
 \begin{frame}{Impact of initial conditions (II)}
-    
+
 \end{frame}
 \section{Conclusions}
 
