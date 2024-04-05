@@ -268,22 +268,51 @@ Université Paris-Dauphine, PSL}
 
 \end{frame}
 
+\begin{frame}{Creation of a new set of initial conditions}
+  \begin{enumerate}
+    \item Simulate a system $(R_{\rho},Le)$ and wait until it reaches stationarity
+          \begin{figure}
+            \centering
+            \includegraphics[width=0.6\textwidth]{images/last_subsection/transition_temp_to_salin.png}
+            \caption{Simulation of $(R_{\rho},Le) = (1.01,100)$. The blue line is the average vertical velocity,
+              the green line is its intersection with $y = 0$.}
+          \end{figure}
+    \item Save the final velocity, temperature and salinity fields
+    \item Use them as initial conditions for $(R_{\rho}^{\prime},Le^{\prime})$
+  \end{enumerate}
+\end{frame}
 
-\begin{frame}{Impact of initial conditions (I)}
+\begin{frame}{Impact of initial conditions}
   \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{images/last_subsection/combination_temperature_temp_R_rho_5_to_1_prs_0_1.png}
-    \caption{Simulation of the system $(R_{\rho},Le) = (1,10)$ with initial condition $(R_{\rho},Le) = (5,10)$.}
+    \caption{Attempts performed at $Le$ kept constant. Simulation of the system $(R_{\rho},Le) = (1,10)$ with initial condition $(R_{\rho},Le) = (5,10)$.}
   \end{figure}
 \end{frame}
 
-\begin{frame}{Impact of initial conditions (II)}
-
+\begin{frame}{Creation of a stable state with four convecting cells}
+  \begin{figure}[ht]
+    \centering
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=0.65\textwidth]{images/last_subsection/initial_four.png}
+    \end{subfigure}\\
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=0.65\textwidth]{images/last_subsection/final_four.png}
+    \end{subfigure}\\
+    \caption{Transition from two convecting cells to four convecting cells. Initial system is $(R_{\rho},L_e) = (0.9,0.25)$ and final system is $(R_{\rho},L_e) = (1,100)$}
+    \label{fig:changeTS}
+  \end{figure}
 \end{frame}
 \section{Conclusions}
 
 \begin{frame}{Conclusions}
-
+  \begin{enumerate}
+    \item Coherent results between explicit and implicit diffusions
+    \item Phase diagram coherent with our understanding
+    \item Interesting transitions from one pair of convecting cells to two pairs of convecting cells
+  \end{enumerate}
 \end{frame}
 
 
