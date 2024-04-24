@@ -35,4 +35,7 @@ The code is mainly in the `src` folder, and the headers are in the `include` fol
 
 ## Results
 
-Here you can see some results of the simulation.
+Here you can see some results of the simulation. In particular, in the video below we show how the flow is initially circulating due to temperature convection and the suddenly changes to a salinity convection pattern.
+
+https://github.com/victorballester7/thermohaline-convection/assets/78110444/12f5cbfa-4bd5-48e2-bea2-90c0a7801d3f
+
